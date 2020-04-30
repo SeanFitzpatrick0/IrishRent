@@ -1,6 +1,7 @@
 import os
 import time
 import json
+import itertools
 from pyaxis import pyaxis
 import pandas as pd
 import numpy as np
@@ -89,34 +90,54 @@ def format_rent_data(df):
             'town': town
         }
 
+        # TODO doc whats happening
+        property_category_prices = {}
         for (property_type, beds), price_data in location_data.groupby(['PropertyType', 'Beds']):
             price_at_times = {f"{row['Year']}Q{row['Quarter']}": row['Price']
                               for _, row in price_data.iterrows()}
 
-            price_data = {
+            property_type_prices = {
                 'propertyType': property_type,
                 'beds': beds,
                 'prices': price_at_times
             }
+            property_category_prices[f'{property_type}_{beds}'] = property_type_prices
 
-            location_key = {'County': county,
-                            'PostCode': postcode, 'Town': town}[location_type]
+        location_key = {'County': county,
+                        'PostCode': postcode, 'Town': town}[location_type]
+        rent_data[location_type][location_key] = {
+            'location': location, 'priceData': property_category_prices}
 
-            rent_data[location_type][location_key] = {
-                'location': location, 'priceData': price_data}
-
+    # TODO DOC
     rent_data = replace_item_in_dict(rent_data, 'Missing', None)
-    assert len(rent_data['County'].keys()) == len(df['County'].unique())
 
+    # TODO DOC
+    # validate_rent_data(rent_data, df)
+
+    return rent_data
+
+
+def validate_rent_data(rent_data, df):
+    # TODO DOC
+
+    assert len(rent_data['County'].keys()) == len(df['County'].unique())
     valid_postcodes = df['PostCode'].unique().tolist()
     valid_postcodes.remove('Missing')
     assert len(rent_data['PostCode'].keys()) == len(valid_postcodes)
-
     valid_towns = df['Town'].unique().tolist()
     valid_towns.remove('Missing')
     assert len(rent_data['Town'].keys()) == len(valid_towns)
 
-    return rent_data
+    merged_records = list(itertools.chain(*[rent_data['County'], rent_data['PostCode'], rent_data['Town']]))
+    for record in merged_records:
+        import pdb; pdb.set_trace()
+        assert 'location' in record
+        # TODO validate location info is valid
+
+        # TODO DOC
+        assert 'priceData' in record
+        assert len(record['priceData']) == (len(df['PropertyType'].unique()) + len(df['Beds'].unique()))
+
 
 
 if __name__ == "__main__":
