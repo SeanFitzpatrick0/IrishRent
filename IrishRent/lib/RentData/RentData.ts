@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
-import { RentDataContent, LocationData, Location } from "./RentData_interfaces";
-import { idToURL } from "./Utils";
+import { RentDataContent, LocationTypeData, LocationData, Location } from "./RentData_interfaces";
+import { toURL } from "../Utils";
 
 export default class RentData {
 	/** TODO */
@@ -12,9 +12,9 @@ export default class RentData {
 		"rent_data_2020-04-30-16-53-53.json"
 	);
 
-	private counties: LocationData;
-	private postcodes: LocationData;
-	private towns: LocationData;
+	private counties: LocationTypeData;
+	private postcodes: LocationTypeData;
+	private towns: LocationTypeData;
 
 	private currentYear = 2019; // TODO include in data export
 	private currentQuarter = 4; // TODO include in data export
@@ -90,10 +90,21 @@ export default class RentData {
 				else if (location.locationType === "PostCode")
 					path = location.postcode;
 				else path = location.town;
-				return { params: { id: idToURL(path) } };
+				return { params: { id: toURL(path) } };
 			});
 		});
 
 		return locationPaths.flat();
+	}
+
+	public getLocationData(locationName: string): LocationData {
+		if (this.counties[locationName]) return this.counties[locationName];
+		else if (this.postcodes[locationName])
+			return this.postcodes[locationName];
+		else if (this.towns[locationName]) return this.towns[locationName];
+		else
+			throw new Error(
+				`ERROR: No location with name ${locationName} found.`
+			);
 	}
 }

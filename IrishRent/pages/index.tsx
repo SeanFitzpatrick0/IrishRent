@@ -1,5 +1,5 @@
 import { GetStaticProps } from "next";
-import RentData from "../lib/RentData";
+import RentData from "../lib/RentData/RentData";
 
 export default function Home({ locations, countyPrices }) {
 	return (

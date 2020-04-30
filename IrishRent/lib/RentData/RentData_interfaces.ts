@@ -1,16 +1,18 @@
 export interface RentDataContent {
-	County: LocationData;
-	PostCode: LocationData;
-	Town: LocationData;
+	County: LocationTypeData;
+	PostCode: LocationTypeData;
+	Town: LocationTypeData;
+}
+
+export interface LocationTypeData {
+	[key: string]: LocationData;
 }
 
 export interface LocationData {
-	[key: string]: {
-		location: Location;
-		priceData: {
-			[key: string]: PriceRecord
-		}
-	}
+	location: Location;
+	priceData: {
+		[key: string]: PriceRecord;
+	};
 }
 
 export interface Location {
@@ -25,5 +27,5 @@ export interface PriceRecord {
 	beds: string;
 	prices: {
 		[key: string]: number;
-	}
+	};
 }
