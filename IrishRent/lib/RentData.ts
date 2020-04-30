@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
-
 import { RentDataContent, LocationData, Location } from "./RentData_interfaces";
+import { idToURL } from "./Utils";
 
 export default class RentData {
 	/** TODO */
@@ -33,7 +33,6 @@ export default class RentData {
 		return RentData.instance;
 	}
 
-	/*** DATA ACCESS METHODS ***/
 	public getLocations(): {
 		counties: Location[];
 		postcodes: Location[];
@@ -80,5 +79,21 @@ export default class RentData {
 		}
 
 		return countiesPrices;
+	}
+
+	public getLocationPaths(): { params: { id: string } }[] {
+		const locations = this.getLocations();
+		const locationPaths = Object.values(locations).map((locations) => {
+			return locations.map((location) => {
+				let path;
+				if (location.locationType === "County") path = location.county;
+				else if (location.locationType === "PostCode")
+					path = location.postcode;
+				else path = location.town;
+				return { params: { id: idToURL(path) } };
+			});
+		});
+
+		return locationPaths.flat();
 	}
 }

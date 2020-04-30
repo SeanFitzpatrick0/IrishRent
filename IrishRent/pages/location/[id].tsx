@@ -1,4 +1,5 @@
 import { GetStaticProps, GetStaticPaths } from "next";
+import RentData from "../../lib/RentData";
 
 export default function Location() {
 	return (
@@ -9,13 +10,8 @@ export default function Location() {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-	let paths = [
-		{
-			params: {
-				id: "test",
-			},
-		},
-	];
+    const rentData = RentData.getInstance();
+    const paths = rentData.getLocationPaths();
 	return {
 		paths,
 		fallback: false,
