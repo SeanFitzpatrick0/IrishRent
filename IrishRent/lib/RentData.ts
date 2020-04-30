@@ -1,12 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-import {
-	RentDataContent,
-	LocationData,
-	Location,
-	PriceRecord,
-} from "./RentData_interfaces";
+import { RentDataContent, LocationData, Location } from "./RentData_interfaces";
 
 export default class RentData {
 	/** TODO */
@@ -21,7 +16,7 @@ export default class RentData {
 	private postcodes: LocationData;
 	private towns: LocationData;
 
-	private currentYear = 2019; // TOOD include in data export
+	private currentYear = 2019; // TODO include in data export
 	private currentQuarter = 4; // TODO include in data export
 
 	private constructor() {
@@ -42,7 +37,7 @@ export default class RentData {
 	public getLocations(): {
 		counties: Location[];
 		postcodes: Location[];
-		towns: Locations[];
+		towns: Location[];
 	} {
 		let counties: Location[] = Object.values(this.counties).map(
 			(county) => county.location
@@ -83,7 +78,7 @@ export default class RentData {
 
 			countiesPrices[countyName] = countyPrices;
 		}
-		
+
 		return countiesPrices;
 	}
 }
