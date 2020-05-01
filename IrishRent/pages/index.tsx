@@ -1,16 +1,17 @@
 import { GetStaticProps } from "next";
+import Header from "../components/Header";
 import RentData from "../lib/RentData/RentData";
 
 export default function Home({ locations, countyPrices }) {
 	return (
-		<div>
-			<h1>Irish Rent</h1>
+		<>
+			<Header />
 			<div>
 				<p>Locations = {JSON.stringify(locations)}</p>
 				<br />
 				<p>Prices = {JSON.stringify(countyPrices)}</p>
 			</div>
-		</div>
+		</>
 	);
 }
 
