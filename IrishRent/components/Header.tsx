@@ -15,6 +15,7 @@ import PersonIcon from "@material-ui/icons/Person";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import LocationCityIcon from "@material-ui/icons/LocationCity";
 import ContactSupportIcon from "@material-ui/icons/ContactSupport";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 // Constants
 const ACCOUNT_ACTIONS_MENU_ID = "users-actions-menu";
@@ -93,8 +94,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-// Render
-export default function Header() {
+export default function Header({ locations }) {
 	// Styles
 	const classes = useStyles();
 
@@ -135,18 +135,28 @@ export default function Header() {
 
 					{/* Search Bar */}
 					<div className={classes.search}>
-						<div className={classes.searchIcon}>
-							<SearchIcon />
-						</div>
-						<InputBase
-							classes={{
-								root: classes.inputRoot,
-								input: classes.inputInput,
-							}}
-							placeholder={SEARCH_BAR_PLACEHOLDER}
-							inputProps={{
-								"aria-label": SEARCH_BAR_PLACEHOLDER,
-							}}
+						<Autocomplete
+							freeSolo
+							options={locations.towns.map(
+								(location) => location.town
+							)}
+							renderInput={(params) => (
+								<>
+									<div className={classes.searchIcon}>
+										<SearchIcon />
+									</div>
+									<InputBase
+										ref={params.InputProps.ref}
+										inputProps={params.inputProps}
+										placeholder={SEARCH_BAR_PLACEHOLDER}
+										autoFocus
+										classes={{
+											root: classes.inputRoot,
+											input: classes.inputInput,
+										}}
+									/>
+								</>
+							)}
 						/>
 					</div>
 
@@ -236,8 +246,8 @@ function HeaderMenu({ anchorElement, id, isOpen, handelClose, items }) {
 			open={isOpen}
 			onClose={handelClose}
 		>
-			{items.map(({ Icon, label }) => (
-				<MenuItem onClick={handelClose}>
+			{items.map(({ Icon, label }, i) => (
+				<MenuItem key={i} onClick={handelClose}>
 					<IconButton color="inherit">
 						<Icon aria-label={label} />
 					</IconButton>

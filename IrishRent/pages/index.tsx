@@ -5,7 +5,7 @@ import Header from "../components/Header";
 export default function Home({ locations, countyPrices }) {
 	return (
 		<div>
-			<Header />
+			<Header locations={locations} />
 			<div>
 				<p>Locations = {JSON.stringify(locations)}</p>
 				<br />
