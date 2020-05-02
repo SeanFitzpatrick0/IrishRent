@@ -4,6 +4,9 @@ import Typography from "@material-ui/core/Typography";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import InputBase from "@material-ui/core/InputBase";
+import Autocomplete, {
+	createFilterOptions,
+} from "@material-ui/lab/Autocomplete";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import Menu from "@material-ui/core/Menu";
@@ -15,7 +18,9 @@ import PersonIcon from "@material-ui/icons/Person";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import LocationCityIcon from "@material-ui/icons/LocationCity";
 import ContactSupportIcon from "@material-ui/icons/ContactSupport";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import parse from "autosuggest-highlight/parse";
+import match from "autosuggest-highlight/match";
+import { Location } from "../lib/RentData/RentData_interfaces";
 
 // Constants
 const ACCOUNT_ACTIONS_MENU_ID = "users-actions-menu";
@@ -137,9 +142,8 @@ export default function Header({ locations }) {
 					<div className={classes.search}>
 						<Autocomplete
 							freeSolo
-							options={locations.towns.map(
-								(location) => location.town
-							)}
+							options={locations.towns}
+							getOptionLabel={(option: Location) => option.town}
 							renderInput={(params) => (
 								<>
 									<div className={classes.searchIcon}>
@@ -157,6 +161,33 @@ export default function Header({ locations }) {
 									/>
 								</>
 							)}
+							renderOption={(
+								option: Location,
+								{ inputValue }
+							) => {
+								const matches = match(option.town, inputValue);
+								const parts = parse(option.town, matches);
+								return (
+									<div>
+										{parts.map((part, index) => (
+											<span
+												key={index}
+												style={{
+													fontWeight: part.highlight
+														? 700
+														: 400,
+												}}
+											>
+												{part.text}
+											</span>
+										))}
+									</div>
+								);
+							}}
+							filterOptions={createFilterOptions({
+								matchFrom: "start",
+								trim: true,
+							})}
 						/>
 					</div>
 
