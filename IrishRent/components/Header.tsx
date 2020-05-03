@@ -21,6 +21,7 @@ import ContactSupportIcon from "@material-ui/icons/ContactSupport";
 import parse from "autosuggest-highlight/parse";
 import match from "autosuggest-highlight/match";
 import { Location } from "../lib/RentData/RentData_interfaces";
+import { getLocationName } from "../lib/Utils";
 
 // Constants
 const ACCOUNT_ACTIONS_MENU_ID = "users-actions-menu";
@@ -139,57 +140,7 @@ export default function Header({ locations }) {
 					</Typography>
 
 					{/* Search Bar */}
-					<div className={classes.search}>
-						<Autocomplete
-							freeSolo
-							options={locations.towns}
-							getOptionLabel={(option: Location) => option.town}
-							renderInput={(params) => (
-								<>
-									<div className={classes.searchIcon}>
-										<SearchIcon />
-									</div>
-									<InputBase
-										ref={params.InputProps.ref}
-										inputProps={params.inputProps}
-										placeholder={SEARCH_BAR_PLACEHOLDER}
-										autoFocus
-										classes={{
-											root: classes.inputRoot,
-											input: classes.inputInput,
-										}}
-									/>
-								</>
-							)}
-							renderOption={(
-								option: Location,
-								{ inputValue }
-							) => {
-								const matches = match(option.town, inputValue);
-								const parts = parse(option.town, matches);
-								return (
-									<div>
-										{parts.map((part, index) => (
-											<span
-												key={index}
-												style={{
-													fontWeight: part.highlight
-														? 700
-														: 400,
-												}}
-											>
-												{part.text}
-											</span>
-										))}
-									</div>
-								);
-							}}
-							filterOptions={createFilterOptions({
-								matchFrom: "start",
-								trim: true,
-							})}
-						/>
-					</div>
+					<SearchBar locations={locations} />
 
 					{/* Add Space*/}
 					<div className={classes.grow} />
@@ -265,7 +216,7 @@ export default function Header({ locations }) {
 	);
 }
 
-// Render Utils
+// Render Helpers
 function HeaderMenu({ anchorElement, id, isOpen, handelClose, items }) {
 	return (
 		<Menu
@@ -286,5 +237,77 @@ function HeaderMenu({ anchorElement, id, isOpen, handelClose, items }) {
 				</MenuItem>
 			))}
 		</Menu>
+	);
+}
+
+function SearchBar({ locations }) {
+	// Styles
+	const classes = useStyles();
+
+	// State
+	const options = [
+		...locations.counties,
+		...locations.postcodes,
+		...locations.towns,
+	];
+	const filterOptions = createFilterOptions({
+		matchFrom: "start",
+		trim: true,
+		limit: 5,
+	});
+	const [inputValue, setInputValue] = React.useState("");
+
+	// Render Helpers
+	const InputRender = ({ params }) => (
+		<>
+			<div className={classes.searchIcon}>
+				<SearchIcon />
+			</div>
+			<InputBase
+				ref={params.InputProps.ref}
+				inputProps={params.inputProps}
+				placeholder={SEARCH_BAR_PLACEHOLDER}
+				autoFocus
+				classes={{
+					root: classes.inputRoot,
+					input: classes.inputInput,
+				}}
+			/>
+		</>
+	);
+	const SuggestionRender = ({ option, inputValue }) => {
+		const locationName = getLocationName(option);
+		const matches = match(locationName, inputValue);
+		const parts = parse(locationName, matches);
+		return (
+			<div>
+				{parts.map((part, i) => (
+					<span
+						key={i}
+						style={{ fontWeight: part.highlight ? 700 : 400 }}
+					>
+						{part.text}
+					</span>
+				))}
+			</div>
+		);
+	};
+
+	// Render
+	return (
+		<div className={classes.search}>
+			<Autocomplete
+				freeSolo
+				options={inputValue.length > 0 ? options : []}
+				onInputChange={(e, newInput) => setInputValue(newInput)}
+				getOptionLabel={(option: Location) => getLocationName(option)}
+				filterOptions={filterOptions}
+				renderInput={(params) => <InputRender params={params} />}
+				groupBy={(option: Location) => option.locationType}
+				renderOption={(option: Location, { inputValue }) => (
+					<SuggestionRender option={option} inputValue={inputValue} />
+				)}
+			/>
+		</div>
 	);
 }

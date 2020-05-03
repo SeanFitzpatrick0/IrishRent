@@ -16,15 +16,15 @@ export interface LocationData {
 }
 
 export interface Location {
-	locationType: string;
+	locationType: "County" | "PostCode" | "Town";
 	county: string;
 	postcode: string;
 	town: string;
 }
 
 export interface PriceRecord {
-	propertyType: string;
-	beds: string;
+	propertyType: "Any" | "Detached" | "SemiDetached" | "Terrace" | "Flat";
+	beds: "Any" | "1" | "2" | "3" | "1-2" | "1-3" | "4+";
 	prices: {
 		[key: string]: number;
 	};

@@ -1,7 +1,12 @@
 import fs from "fs";
 import path from "path";
-import { RentDataContent, LocationTypeData, LocationData, Location } from "./RentData_interfaces";
-import { toURL } from "../Utils";
+import {
+	RentDataContent,
+	LocationTypeData,
+	LocationData,
+	Location,
+} from "./RentData_interfaces";
+import { toURL, getLocationName } from "../Utils";
 
 export default class RentData {
 	/** TODO */
@@ -9,7 +14,7 @@ export default class RentData {
 	private dataFilePath = path.join(
 		process.cwd(),
 		"data",
-		"rent_data_2020-04-30-16-53-53.json"
+		"rent_data_2020-05-03-15-49-01.json"
 	);
 
 	private counties: LocationTypeData;
@@ -53,8 +58,8 @@ export default class RentData {
 	public getCurrentCountiesPrices(): {
 		[key: string]: {
 			[key: string]: {
-				propertyType: String;
-				beds: String;
+				propertyType: string;
+				beds: string;
 				price: number;
 			};
 		};
@@ -85,11 +90,7 @@ export default class RentData {
 		const locations = this.getLocations();
 		const locationPaths = Object.values(locations).map((locations) => {
 			return locations.map((location) => {
-				let path;
-				if (location.locationType === "County") path = location.county;
-				else if (location.locationType === "PostCode")
-					path = location.postcode;
-				else path = location.town;
+				let path = getLocationName(location);
 				return { params: { id: toURL(path) } };
 			});
 		});
