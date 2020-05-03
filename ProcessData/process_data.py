@@ -13,6 +13,10 @@ def clean_data(df):
     df.rename(columns={'Number of Bedrooms': 'Beds',
                        'Property Type': 'PropertyType', 'DATA': 'Price'}, inplace=True)
 
+    # Remove invalid characters
+    df['Location'] = df['Location'].str.replace('-', ' ')
+    df['Location'] = df['Location'].str.replace('.', '')
+
     # Break up Location
     # TODO add comments
     df['Town'] = df['Location'].map(lambda location: location.split(',')[
