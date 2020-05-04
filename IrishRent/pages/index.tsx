@@ -1,17 +1,14 @@
 import { GetStaticProps } from "next";
 import RentData from "../lib/RentData/RentData";
-import Header from "../components/Header";
+import Layout from "../components/Layout";
 
 export default function Home({ locations, countyPrices }) {
 	return (
-		<div>
-			<Header locations={locations} />
-			<div>
-				<p>Locations = {JSON.stringify(locations)}</p>
-				<br />
-				<p>Prices = {JSON.stringify(countyPrices)}</p>
-			</div>
-		</div>
+		<>
+			<Layout locations={locations}>
+				<p>Content</p>
+			</Layout>
+		</>
 	);
 }
 
