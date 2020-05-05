@@ -1,14 +1,15 @@
 import { GetStaticProps, GetStaticPaths } from "next";
+import Layout from "../../components/Layout/Layout";
 import RentData from "../../lib/RentData/RentData";
 import { fromURL } from "../../lib/Utils";
 
-export default function Location({ locationName, locationData }) {
+export default function Location({ locationName, locationData, locations }) {
 	return (
-		<div>
+		<Layout locations={locations}>
 			<h1>{locationName}</h1>
 			<hr />
-			{JSON.stringify(locationData)}
-		</div>
+			<p>Data</p>
+		</Layout>
 	);
 }
 
@@ -22,5 +23,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 	const rentData = RentData.getInstance();
 	const locationName = fromURL(params.id.toString());
 	const locationData = rentData.getLocationData(locationName);
-	return { props: { locationName, locationData } };
+	const locations = rentData.getLocations();
+	return { props: { locationName, locationData, locations } };
 };

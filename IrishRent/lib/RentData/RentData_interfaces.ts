@@ -15,6 +15,12 @@ export interface LocationData {
 	};
 }
 
+export interface AllLocationsRecord {
+	counties: Location[];
+	postcodes: Location[];
+	towns: Location[];
+}
+
 export interface Location {
 	locationType: "County" | "PostCode" | "Town";
 	county: string;

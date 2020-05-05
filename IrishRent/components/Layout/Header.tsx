@@ -1,3 +1,4 @@
+import Router from "next/router";
 import React from "react";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
@@ -20,8 +21,11 @@ import LocationCityIcon from "@material-ui/icons/LocationCity";
 import ContactSupportIcon from "@material-ui/icons/ContactSupport";
 import parse from "autosuggest-highlight/parse";
 import match from "autosuggest-highlight/match";
-import { Location } from "../../lib/RentData/RentData_interfaces";
-import { getLocationName } from "../../lib/Utils";
+import {
+	Location,
+	AllLocationsRecord,
+} from "../../lib/RentData/RentData_interfaces";
+import { getLocationName, toURL, toTitleCase } from "../../lib/Utils";
 
 // Constants
 const ACCOUNT_ACTIONS_MENU_ID = "users-actions-menu";
@@ -100,7 +104,11 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function Header({ locations }) {
+export default function Header({
+	locations,
+}: {
+	locations: AllLocationsRecord;
+}) {
 	// Styles
 	const classes = useStyles();
 
@@ -240,7 +248,7 @@ function HeaderMenu({ anchorElement, id, isOpen, handelClose, items }) {
 	);
 }
 
-function SearchBar({ locations }) {
+function SearchBar({ locations }: { locations: AllLocationsRecord }) {
 	// Styles
 	const classes = useStyles();
 
@@ -256,6 +264,22 @@ function SearchBar({ locations }) {
 		limit: 5,
 	});
 	const [inputValue, setInputValue] = React.useState("");
+
+	// Handle Search
+	const handelSubmit = (e) => {
+		e.preventDefault();
+		if (doesLocationExist(inputValue))
+			Router.push("/location/[id]", `/location/${toURL(inputValue)}`);
+		else console.warn(`WARN: No Locations named ${inputValue}`); // TODO redirect to all locations page (maybe)
+	};
+
+	const doesLocationExist = (locationName) =>
+		Object.values(locations).some((locationType) =>
+			locationType.some(
+				(location) =>
+					getLocationName(location) === toTitleCase(locationName)
+			)
+		);
 
 	// Render Helpers
 	const InputRender = ({ params }) => (
@@ -295,12 +319,16 @@ function SearchBar({ locations }) {
 
 	// Render
 	return (
-		<div className={classes.search}>
+		<form className={classes.search} onSubmit={handelSubmit.bind(this)}>
 			<Autocomplete
 				freeSolo
 				options={inputValue.length > 0 ? options : []}
 				onInputChange={(e, newInput) => setInputValue(newInput)}
-				getOptionLabel={(option: Location) => getLocationName(option)}
+				getOptionLabel={(option: Location) =>
+					typeof option === "string"
+						? option
+						: getLocationName(option)
+				}
 				filterOptions={filterOptions}
 				renderInput={(params) => <InputRender params={params} />}
 				groupBy={(option: Location) => option.locationType}
@@ -308,6 +336,6 @@ function SearchBar({ locations }) {
 					<SuggestionRender option={option} inputValue={inputValue} />
 				)}
 			/>
-		</div>
+		</form>
 	);
 }

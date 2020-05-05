@@ -4,6 +4,7 @@ import {
 	RentDataContent,
 	LocationTypeData,
 	LocationData,
+	AllLocationsRecord,
 	Location,
 } from "./RentData_interfaces";
 import { toURL, getLocationName } from "../Utils";
@@ -38,11 +39,7 @@ export default class RentData {
 		return RentData.instance;
 	}
 
-	public getLocations(): {
-		counties: Location[];
-		postcodes: Location[];
-		towns: Location[];
-	} {
+	public getLocations(): AllLocationsRecord {
 		let counties: Location[] = Object.values(this.counties).map(
 			(county) => county.location
 		);

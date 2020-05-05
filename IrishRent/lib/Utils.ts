@@ -1,11 +1,13 @@
 import { Location } from "./RentData/RentData_interfaces";
 
 export function toURL(id: string): string {
+	id = toTitleCase(id);
 	return id.replace(" ", "-");
 }
 
 export function fromURL(url: string): string {
-	return url.replace("-", " ");
+	let id = url.replace("-", " ");
+	return toTitleCase(id);
 }
 
 export function getLocationName(location: Location): string {
@@ -33,4 +35,11 @@ export function chunkArray(array: any[], numChunks: number): any[] {
 		chunkStart += chunkSize;
 	}
 	return result;
+}
+
+export function toTitleCase(str) {
+	return str
+		.split(" ")
+		.map((word) => word[0].toUpperCase() + word.substr(1).toLowerCase())
+		.join(" ");
 }
