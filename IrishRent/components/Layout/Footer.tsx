@@ -18,7 +18,7 @@ import {
 	FacebookShareButton,
 	FacebookIcon,
 } from "react-share";
-import { chunkArray } from "../lib/Utils";
+import { chunkArray } from "../../lib/Utils";
 
 const useStyles = makeStyles((theme) => ({
 	"@global": {
@@ -28,7 +28,10 @@ const useStyles = makeStyles((theme) => ({
 			listStyle: "none",
 		},
 	},
-	footer: { backgroundColor: "#5C5B5B" },
+	footer: { 
+		backgroundColor: "#5C5B5B",
+		marginTop: theme.spacing(10),
+	 },
 	footerContainer: {
 		marginTop: theme.spacing(6),
 		paddingTop: theme.spacing(3),

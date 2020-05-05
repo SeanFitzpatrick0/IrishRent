@@ -13,6 +13,7 @@ const useStyles = makeStyles((theme) => ({
 		display: "flex",
 		flexGrow: 1,
 	},
+	content: { width: "100%" },
 }));
 
 export default function Layout({ locations, children }) {
@@ -21,7 +22,7 @@ export default function Layout({ locations, children }) {
 		<div className={classes.page}>
 			<Header locations={locations} />
 			<Container maxWidth="md" className={classes.main} component="main">
-				<div>{children}</div>
+				<div className={classes.content}>{children}</div>
 			</Container>
 			<Footer />
 		</div>

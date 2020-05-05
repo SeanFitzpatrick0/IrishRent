@@ -20,8 +20,8 @@ import LocationCityIcon from "@material-ui/icons/LocationCity";
 import ContactSupportIcon from "@material-ui/icons/ContactSupport";
 import parse from "autosuggest-highlight/parse";
 import match from "autosuggest-highlight/match";
-import { Location } from "../lib/RentData/RentData_interfaces";
-import { getLocationName } from "../lib/Utils";
+import { Location } from "../../lib/RentData/RentData_interfaces";
+import { getLocationName } from "../../lib/Utils";
 
 // Constants
 const ACCOUNT_ACTIONS_MENU_ID = "users-actions-menu";
