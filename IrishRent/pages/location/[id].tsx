@@ -1,14 +1,15 @@
 import { GetStaticProps, GetStaticPaths } from "next";
+import React from "react";
 import Layout from "../../components/Layout/Layout";
+import LocationDetails from "../../components/LocationDetails";
 import RentData from "../../lib/RentData/RentData";
 import { fromURL } from "../../lib/Utils";
 
 export default function Location({ locationName, locationData, locations }) {
 	return (
 		<Layout locations={locations}>
-			<h1>{locationName}</h1>
-			<hr />
-			<p>Data</p>
+			<LocationDetails locationName={locationName} open={true} />
+			<p>The Data</p>
 		</Layout>
 	);
 }

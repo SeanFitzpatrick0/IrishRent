@@ -30,7 +30,6 @@ const useStyles = makeStyles((theme) => ({
 	},
 	footer: { 
 		backgroundColor: "#5C5B5B",
-		marginTop: theme.spacing(10),
 	 },
 	footerContainer: {
 		marginTop: theme.spacing(6),

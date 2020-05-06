@@ -10,11 +10,7 @@ const useStyles = makeStyles((theme) => ({
 		flexFlow: "column",
 		height: "100vh",
 	},
-	main: {
-		display: "flex",
-		flexGrow: 1,
-	},
-	content: { width: "100%" },
+	main: { display: "flex", flexGrow: 1, width: "100%" },
 }));
 
 export default function Layout({
@@ -28,9 +24,7 @@ export default function Layout({
 	return (
 		<div className={classes.page}>
 			<Header locations={locations} />
-			<Container maxWidth="md" className={classes.main} component="main">
-				<div className={classes.content}>{children}</div>
-			</Container>
+			<main className={classes.main}>{children}</main>
 			<Footer />
 		</div>
 	);

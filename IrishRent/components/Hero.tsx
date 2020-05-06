@@ -7,7 +7,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import CountyMap from "./CountyMap";
 
 const useStyles = makeStyles((theme) => ({
-	heroWrapper: { paddingTop: theme.spacing(4) },
+	heroWrapper: {
+		paddingTop: theme.spacing(4),
+		paddingBottom: theme.spacing(15),
+	},
 	heroSubtitle: { [theme.breakpoints.down("sm")]: { display: "none" } },
 	heroButtons: { marginTop: theme.spacing(4) },
 	mapContainer: { marginTop: theme.spacing(2) },
