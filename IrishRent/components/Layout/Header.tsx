@@ -25,7 +25,7 @@ import {
 	Location,
 	AllLocationsRecord,
 } from "../../lib/RentData/RentData_interfaces";
-import { getLocationName, toURL, toTitleCase } from "../../lib/Utils";
+import { getLocationName, toURL, findLocationInRecords } from "../../lib/Utils";
 
 // Constants
 const ACCOUNT_ACTIONS_MENU_ID = "users-actions-menu";
@@ -268,18 +268,11 @@ function SearchBar({ locations }: { locations: AllLocationsRecord }) {
 	// Handle Search
 	const handelSubmit = (e) => {
 		e.preventDefault();
-		if (doesLocationExist(inputValue))
-			Router.push("/location/[id]", `/location/${toURL(inputValue)}`);
+		const locationID = findLocationInRecords(inputValue, locations);
+		if (locationID)
+			Router.push("/location/[id]", `/location/${toURL(locationID)}`);
 		else console.warn(`WARN: No Locations named ${inputValue}`); // TODO redirect to all locations page (maybe)
 	};
-
-	const doesLocationExist = (locationName) =>
-		Object.values(locations).some((locationType) =>
-			locationType.some(
-				(location) =>
-					getLocationName(location) === toTitleCase(locationName)
-			)
-		);
 
 	// Render Helpers
 	const InputRender = ({ params }) => (

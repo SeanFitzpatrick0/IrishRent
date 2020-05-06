@@ -1,13 +1,11 @@
-import { Location } from "./RentData/RentData_interfaces";
+import { Location, AllLocationsRecord } from "./RentData/RentData_interfaces";
 
 export function toURL(id: string): string {
-	id = toTitleCase(id);
 	return id.replace(" ", "-");
 }
 
 export function fromURL(url: string): string {
-	let id = url.replace("-", " ");
-	return toTitleCase(id);
+	return url.replace("-", " ");
 }
 
 export function getLocationName(location: Location): string {
@@ -37,9 +35,17 @@ export function chunkArray(array: any[], numChunks: number): any[] {
 	return result;
 }
 
-export function toTitleCase(str) {
-	return str
-		.split(" ")
-		.map((word) => word[0].toUpperCase() + word.substr(1).toLowerCase())
-		.join(" ");
+export function findLocationInRecords(
+	locationName: string,
+	locationRecords: AllLocationsRecord
+): string | undefined {
+	for (const locationType in locationRecords) {
+		const typeLocations = locationRecords[locationType];
+		const foundLocation = typeLocations.find(
+			(location) =>
+				getLocationName(location).toLowerCase() ===
+				locationName.toLowerCase()
+		);
+		if (foundLocation) return getLocationName(foundLocation);
+	}
 }
