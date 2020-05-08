@@ -1,9 +1,9 @@
 import React, { useRef, useEffect, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 import List from "@material-ui/core/List";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Typography from "@material-ui/core/Typography";
-import Slide from "@material-ui/core/Slide";
 import Container from "@material-ui/core/Container";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -72,11 +72,16 @@ const useStyles = makeStyles((theme) => ({
 	},
 	locationDescription: { marginBottom: theme.spacing(2) },
 	statItem: { width: "50%" },
+	hide: { display: "none" },
 }));
 
 export default function locationDetails({ locationName, open }) {
 	// Styles
 	const classes = useStyles();
+
+	/* Is on large screen ? */
+	const theme = useTheme();
+	const onLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
 
 	// State
 	const sidebar = useRef(null);
@@ -84,7 +89,8 @@ export default function locationDetails({ locationName, open }) {
 
 	const setSidebarHeight = () => {
 		const heightOfSide =
-			window.innerHeight - sidebar.current.getBoundingClientRect().top;
+			window.innerHeight -
+			(sidebar.current?.getBoundingClientRect().top || 0);
 		setHeight(heightOfSide);
 	};
 
@@ -97,41 +103,43 @@ export default function locationDetails({ locationName, open }) {
 
 	// Render
 	return (
-		<Slide direction="right" in={open} mountOnEnter>
-			<div ref={sidebar} className={classes.sidebar} style={{ height }}>
-				<Container>
-					{/* Location Title */}
-					<Typography
-						component="h1"
-						variant="h6"
-						className={classes.locationTitle}
-						color="textSecondary"
-						gutterBottom
-					>
-						{locationName}
-					</Typography>
+		<div
+			ref={sidebar}
+			className={`${classes.sidebar} ${!onLargeScreen && classes.hide}`}
+			style={{ height }}
+		>
+			<Container>
+				{/* Location Title */}
+				<Typography
+					component="h1"
+					variant="h6"
+					className={classes.locationTitle}
+					color="textSecondary"
+					gutterBottom
+				>
+					{locationName}
+				</Typography>
 
-					{/* Location Image */}
-					<img
-						className={classes.locationImg}
-						src="/images/DEMO_LOCATION_IMAGE.jpg"
-						alt={`Rent Prices in ${locationName}`}
-					/>
+				{/* Location Image */}
+				<img
+					className={classes.locationImg}
+					src="/images/DEMO_LOCATION_IMAGE.jpg"
+					alt={`Rent Prices in ${locationName}`}
+				/>
 
-					{/* Location Description */}
-					<Typography
-						component="p"
-						variant="body2"
-						className={classes.locationDescription}
-					>
-						{DEMO_ABSTRACT}
-					</Typography>
+				{/* Location Description */}
+				<Typography
+					component="p"
+					variant="body2"
+					className={classes.locationDescription}
+				>
+					{DEMO_ABSTRACT}
+				</Typography>
 
-					{/* Location Stats */}
-					<LocationStats locationStats={DEMO_STATS} />
-				</Container>
-			</div>
-		</Slide>
+				{/* Location Stats */}
+				<LocationStats locationStats={DEMO_STATS} />
+			</Container>
+		</div>
 	);
 }
 
