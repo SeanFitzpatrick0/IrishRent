@@ -2,10 +2,18 @@ import os
 import time
 import json
 import itertools
+import logging
 from pyaxis import pyaxis
 import pandas as pd
 import numpy as np
 from utils import replace_item_in_dict
+
+NAN_REPLACE = 'Missing'
+RAW_DATA_PATH = os.path.join(
+    'raw_data', 'Quarter_Location_PropertyType_NumbBed(2007Q4-2019Q4)2020_04_22.px')
+
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s:%(levelname)s:%(message)s')
 
 
 def clean_data(df):
@@ -18,7 +26,6 @@ def clean_data(df):
     df['Location'] = df['Location'].str.replace('.', '')
 
     # Break up Location
-    # TODO add comments
     df['Town'] = df['Location'].map(lambda location: location.split(',')[
                                     0].strip() if len(location.split(',')) > 1 else np.NaN)
     df['County'] = df['Location'].map(lambda location: location.split(',')[
@@ -40,7 +47,20 @@ def clean_data(df):
     df.loc[post_code_rows, 'LocationType'] = 'PostCode'
     df.loc[town_rows, 'LocationType'] = 'Town'
 
-    # Fix Dublin 22 TODO add further doc
+    # Mark if the town name appears in multiple counties
+    df['InMultipleCounties'] = False
+    town_county_combinations = df[town_rows].groupby(
+        ['Town', 'County']).groups.keys()
+    seen_towns = set()
+    for town, _ in town_county_combinations:
+        if town not in seen_towns:
+            # Mark town as seen
+            seen_towns.add(town)
+        else:
+            # Town appears more than once
+            df.loc[df['Town'] == town, 'InMultipleCounties'] = True
+
+    # No entry for just Dublin 22 only 'Swords, Dublin 22'. Create new entry
     dublin22_rows = df[df['PostCode'] == 'Dublin 22'].copy()
     dublin22_rows['Town'] = np.NaN
     dublin22_rows['LocationType'] = 'PostCode'
@@ -67,16 +87,14 @@ def clean_data(df):
     })
 
     # Breakup Quarter
-    # TODO these to tasks are taking a long time, DEEPDIVE
     temp = df['Quarter'].str.split('Q', n=1)
     df['Year'], df['Quarter'] = temp.str[0], temp.str[1]
 
     # Fix Price
     df['Price'] = pd.to_numeric(df['Price'])
 
-    # https://github.com/pandas-dev/pandas/issues/10468
-    # TODO move this to data cleaning
-    df = df.fillna('Missing')
+    # Unable to groupby NaN values, need to fill Nan https://github.com/pandas-dev/pandas/issues/10468
+    df = df.fillna(NAN_REPLACE)
 
     return df
 
@@ -85,7 +103,6 @@ def format_rent_data(df):
     rent_data = {location_type: {}
                  for location_type in df['LocationType'].unique()}
 
-    # TODO test removing inner for by adding all cats to first group by
     for (location_type, county, postcode, town), location_data in df.groupby(['LocationType', 'County', 'PostCode', 'Town']):
         location = {
             'locationType': location_type,
@@ -94,7 +111,7 @@ def format_rent_data(df):
             'town': town
         }
 
-        # TODO doc whats happening
+        # Get the prices at each Q for each combination of bed and propertyType
         property_category_prices = {}
         for (property_type, beds), price_data in location_data.groupby(['PropertyType', 'Beds']):
             price_at_times = {f"{row['Year']}Q{row['Quarter']}": row['Price']
@@ -112,64 +129,55 @@ def format_rent_data(df):
         rent_data[location_type][location_key] = {
             'location': location, 'priceData': property_category_prices}
 
-    # TODO DOC
-    rent_data = replace_item_in_dict(rent_data, 'Missing', None)
-
-    # TODO DOC
-    # validate_rent_data(rent_data, df)
+    # Replace the NaN label
+    rent_data = replace_item_in_dict(rent_data, NAN_REPLACE, None)
 
     return rent_data
 
 
-def validate_rent_data(rent_data, df):
-    # TODO DOC
-
+def ensure_has_all_locations(rent_data, df):
+    # Ensure all valid locations are in the data
     assert len(rent_data['County'].keys()) == len(df['County'].unique())
     valid_postcodes = df['PostCode'].unique().tolist()
-    valid_postcodes.remove('Missing')
+    valid_postcodes.remove(NAN_REPLACE)
     assert len(rent_data['PostCode'].keys()) == len(valid_postcodes)
     valid_towns = df['Town'].unique().tolist()
-    valid_towns.remove('Missing')
+    valid_towns.remove(NAN_REPLACE)
     assert len(rent_data['Town'].keys()) == len(valid_towns)
-
-    merged_records = list(itertools.chain(*[rent_data['County'], rent_data['PostCode'], rent_data['Town']]))
-    for record in merged_records:
-        import pdb; pdb.set_trace()
-        assert 'location' in record
-        # TODO validate location info is valid
-
-        # TODO DOC
-        assert 'priceData' in record
-        assert len(record['priceData']) == (len(df['PropertyType'].unique()) + len(df['Beds'].unique()))
-
 
 
 if __name__ == "__main__":
-    # TODO add cli
-    # TODO break this up into its own main file
-    # TODO open file using os path
     # Load data
-    px = pyaxis.parse(
-        'raw_data/Quarter_Location_PropertyType_NumbBed(2007Q4-2019Q4)2020_04_22.px', encoding='ISO-8859-2')
+    px = pyaxis.parse(RAW_DATA_PATH, encoding='ISO-8859-2')
     df = px['DATA']
 
     # Clean data
-    print('Processing rent data ...')
+    logging.info('Processing rent data ...')
     start_time = time.time()
     df = clean_data(df)
-    # TODO replace with logs
-    print(f'--- Finished in {time.time() - start_time :.2f}sec ---')
+    logging.info(f'--- Finished in {time.time() - start_time :.2f}sec ---')
+    output_filepath = os.path.join(
+        'clean_data', f"rent_data_{time.strftime('%Y-%m-%d-%H-%M-%S')}.csv")
+    df.to_csv(output_filepath)
+    logging.info(
+        f'--- Rent (CSV) data written to {os.path.abspath(output_filepath)} ---')
 
     # Format data
-    print('Formating rent data ...')
+    logging.info('Formating rent data ...')
     start_time = time.time()
     rent_data = format_rent_data(df)
-    print(f'--- Finished in {time.time() - start_time :.2f}sec ---')
+    logging.info(f'--- Finished in {time.time() - start_time :.2f}sec ---')
+
+    # Vaildate formatted data
+    logging.info('Validating formatted rent data ...')
+    ensure_has_all_locations(rent_data, df)
 
     # Write data to JSON
-    output_filepath = os.path.join('clean_data', f"rent_data_{time.strftime('%Y-%m-%d-%H-%M-%S')}.json")
-    print('Writing data as JSON ...')
+    output_filepath = os.path.join(
+        'clean_data', f"rent_data_{time.strftime('%Y-%m-%d-%H-%M-%S')}.json")
+    logging.info('Writing data as JSON ...')
     with open(output_filepath, 'w') as fp:
         json.dump(rent_data, fp)
 
-    print(f'--- Rent data written to {os.path.abspath(output_filepath)} ---')
+    logging.info(
+        f'--- Rent data written to {os.path.abspath(output_filepath)} ---')
