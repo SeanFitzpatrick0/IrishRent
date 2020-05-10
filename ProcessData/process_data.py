@@ -156,11 +156,6 @@ if __name__ == "__main__":
     start_time = time.time()
     df = clean_data(df)
     logging.info(f'--- Finished in {time.time() - start_time :.2f}sec ---')
-    output_filepath = os.path.join(
-        'clean_data', f"rent_data_{time.strftime('%Y-%m-%d-%H-%M-%S')}.csv")
-    df.to_csv(output_filepath)
-    logging.info(
-        f'--- Rent (CSV) data written to {os.path.abspath(output_filepath)} ---')
 
     # Format data
     logging.info('Formating rent data ...')
