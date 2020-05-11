@@ -7,7 +7,7 @@ import {
 	AllLocationsRecord,
 	Location,
 } from "./RentData_interfaces";
-import { toURL, getLocationName } from "../Utils";
+import { getLocationName } from "../Utils";
 
 export default class RentData {
 	/** TODO */
@@ -15,7 +15,7 @@ export default class RentData {
 	private dataFilePath = path.join(
 		process.cwd(),
 		"data",
-		"rent_data_2020-05-03-15-49-01.json"
+		"rent_data_2020-05-11-16-08-04.json"
 	);
 
 	private counties: LocationTypeData;
@@ -87,8 +87,8 @@ export default class RentData {
 		const locations = this.getLocations();
 		const locationPaths = Object.values(locations).map((locations) => {
 			return locations.map((location) => {
-				let path = getLocationName(location);
-				return { params: { id: toURL(path) } };
+				let id = getLocationName(location);
+				return { params: { id } };
 			});
 		});
 

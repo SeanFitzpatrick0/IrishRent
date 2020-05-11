@@ -3,7 +3,6 @@ import React from "react";
 import Layout from "../../components/Layout/Layout";
 import LocationDetails from "../../components/LocationDetails";
 import RentData from "../../lib/RentData/RentData";
-import { fromURL } from "../../lib/Utils";
 
 export default function Location({ locationName, locationData, locations }) {
 	return (
@@ -22,7 +21,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 	const rentData = RentData.getInstance();
-	const locationName = fromURL(params.id.toString());
+	const locationName = params.id.toString();
 	const locationData = rentData.getLocationData(locationName);
 	const locations = rentData.getLocations();
 	return { props: { locationName, locationData, locations } };

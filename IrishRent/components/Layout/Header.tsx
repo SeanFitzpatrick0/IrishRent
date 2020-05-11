@@ -25,7 +25,7 @@ import {
 	Location,
 	AllLocationsRecord,
 } from "../../lib/RentData/RentData_interfaces";
-import { getLocationName, toURL, findLocationInRecords } from "../../lib/Utils";
+import { getLocationName, findLocationInRecords } from "../../lib/Utils";
 
 // Constants
 const ACCOUNT_ACTIONS_MENU_ID = "users-actions-menu";
@@ -270,7 +270,7 @@ function SearchBar({ locations }: { locations: AllLocationsRecord }) {
 		e.preventDefault();
 		const locationID = findLocationInRecords(inputValue, locations);
 		if (locationID)
-			Router.push("/location/[id]", `/location/${toURL(locationID)}`);
+			Router.push("/location/[id]", `/location/${locationID}`);
 		else console.warn(`WARN: No Locations named ${inputValue}`); // TODO redirect to all locations page (maybe)
 	};
 
@@ -317,10 +317,9 @@ function SearchBar({ locations }: { locations: AllLocationsRecord }) {
 				freeSolo
 				options={inputValue.length > 0 ? options : []}
 				onInputChange={(e, newInput) => setInputValue(newInput)}
-				getOptionLabel={(option: Location) =>
-					typeof option === "string"
+				getOptionLabel={(option: Location) => typeof option === "string"
 						? option
-						: getLocationName(option)
+						: getLocationName(option);
 				}
 				filterOptions={filterOptions}
 				renderInput={(params) => <InputRender params={params} />}

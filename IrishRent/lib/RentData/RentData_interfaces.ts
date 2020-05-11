@@ -26,6 +26,7 @@ export interface Location {
 	county: string;
 	postcode: string;
 	town: string;
+	inMultipleCounties: boolean;
 }
 
 export interface PriceRecord {

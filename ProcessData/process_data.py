@@ -3,10 +3,11 @@ import time
 import json
 import itertools
 import logging
+from tqdm import tqdm
 from pyaxis import pyaxis
 import pandas as pd
 import numpy as np
-from utils import replace_item_in_dict
+from utils import replace_item_in_dict, get_location_name
 
 NAN_REPLACE = 'Missing'
 RAW_DATA_PATH = os.path.join(
@@ -103,12 +104,13 @@ def format_rent_data(df):
     rent_data = {location_type: {}
                  for location_type in df['LocationType'].unique()}
 
-    for (location_type, county, postcode, town), location_data in df.groupby(['LocationType', 'County', 'PostCode', 'Town']):
+    for (location_type, county, postcode, town, inMultipleCounties), location_data in tqdm(df.groupby(['LocationType', 'County', 'PostCode', 'Town', 'InMultipleCounties'])):
         location = {
             'locationType': location_type,
             'county': county,
             'postcode': postcode,
-            'town': town
+            'town': town,
+            'inMultipleCounties': inMultipleCounties
         }
 
         # Get the prices at each Q for each combination of bed and propertyType
@@ -124,8 +126,7 @@ def format_rent_data(df):
             }
             property_category_prices[f'{property_type}_{beds}'] = property_type_prices
 
-        location_key = {'County': county,
-                        'PostCode': postcode, 'Town': town}[location_type]
+        location_key = get_location_name(location)
         rent_data[location_type][location_key] = {
             'location': location, 'priceData': property_category_prices}
 
@@ -133,17 +134,6 @@ def format_rent_data(df):
     rent_data = replace_item_in_dict(rent_data, NAN_REPLACE, None)
 
     return rent_data
-
-
-def ensure_has_all_locations(rent_data, df):
-    # Ensure all valid locations are in the data
-    assert len(rent_data['County'].keys()) == len(df['County'].unique())
-    valid_postcodes = df['PostCode'].unique().tolist()
-    valid_postcodes.remove(NAN_REPLACE)
-    assert len(rent_data['PostCode'].keys()) == len(valid_postcodes)
-    valid_towns = df['Town'].unique().tolist()
-    valid_towns.remove(NAN_REPLACE)
-    assert len(rent_data['Town'].keys()) == len(valid_towns)
 
 
 if __name__ == "__main__":
@@ -162,10 +152,6 @@ if __name__ == "__main__":
     start_time = time.time()
     rent_data = format_rent_data(df)
     logging.info(f'--- Finished in {time.time() - start_time :.2f}sec ---')
-
-    # Vaildate formatted data
-    logging.info('Validating formatted rent data ...')
-    ensure_has_all_locations(rent_data, df)
 
     # Write data to JSON
     output_filepath = os.path.join(
