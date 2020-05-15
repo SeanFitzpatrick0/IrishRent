@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Typography from "@material-ui/core/Typography";
@@ -8,11 +7,17 @@ import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import Dialog from "@material-ui/core/Dialog";
+import MuiDialogTitle from "@material-ui/core/DialogTitle";
+import MuiDialogContent from "@material-ui/core/DialogContent";
+import IconButton from "@material-ui/core/IconButton";
 import PeopleIcon from "@material-ui/icons/People";
 import TramIcon from "@material-ui/icons/Tram";
 import DirectionsBusIcon from "@material-ui/icons/DirectionsBus";
 import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
 import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
+import InfoIcon from "@material-ui/icons/Info";
+import CloseIcon from "@material-ui/icons/Close";
 
 // TODO Place holder data
 const DEMO_STATS = [
@@ -56,7 +61,8 @@ const DEMO_STATS = [
 // Styles definition
 const useStyles = makeStyles((theme) => ({
 	sidebar: {
-		width: "30%",
+		width: "35%",
+		minWidth: 300,
 		backgroundColor: theme.palette.background.paper,
 		borderRight: `1.5px solid #707070`,
 		overflowY: "scroll",
@@ -73,16 +79,39 @@ const useStyles = makeStyles((theme) => ({
 	},
 	locationDescription: { marginBottom: theme.spacing(2) },
 	statItem: { width: "50%" },
-	hide: { display: "none" },
+	closeButton: {
+		position: "absolute",
+		right: theme.spacing(1),
+		top: theme.spacing(1),
+	},
 }));
 
-export default function locationDetails({ locationName, locationDetails }) {
+export default function locationDetails({
+	locationName,
+	locationDetails,
+	onLargeScreen,
+}) {
+	return (
+		<>
+			{onLargeScreen ? (
+				<LocationDetailsDesktop
+					locationName={locationName}
+					locationDetails={locationDetails}
+				/>
+			) : (
+				<LocationDetailsMobile
+					locationName={locationName}
+					locationDetails={locationDetails}
+				/>
+			)}
+		</>
+	);
+}
+
+// Render helpers
+function LocationDetailsDesktop({ locationName, locationDetails }) {
 	// Styles
 	const classes = useStyles();
-
-	/* Is on large screen ? */
-	const theme = useTheme();
-	const onLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
 
 	// State
 	const sidebar = useRef(null);
@@ -102,53 +131,130 @@ export default function locationDetails({ locationName, locationDetails }) {
 		window.addEventListener("resize", setSidebarHeight);
 	}, []);
 
-	// Render
 	return (
-		<div
-			ref={sidebar}
-			className={`${classes.sidebar} ${!onLargeScreen && classes.hide}`}
-			style={{ height }}
-		>
+		<div ref={sidebar} className={classes.sidebar} style={{ height }}>
 			<Container>
-				{/* Location Title */}
-				<Typography
-					component="h1"
-					variant="h6"
-					className={classes.locationTitle}
-					color="textSecondary"
-					gutterBottom
-				>
-					{locationName}
-				</Typography>
-
-				{/* Location Image */}
-				<Box display="flex">
-					<Box m="auto">
-						<img
-							className={classes.locationImg}
-							src={`/images/location_images/${locationDetails.image}`}
-							alt={`Rent Prices in ${locationName}`}
-						/>
-					</Box>
-				</Box>
-
-				{/* Location Description */}
-				<Typography
-					component="p"
-					variant="body2"
-					className={classes.locationDescription}
-				>
-					{locationDetails.summary}
-				</Typography>
-
-				{/* Location Stats */}
+				<LocationTitle>{locationName}</LocationTitle>
+				<LocationImage
+					locationName={locationName}
+					image={locationDetails.image}
+				/>
+				<LocationSummary locationSummary={locationDetails.summary} />
 				<LocationStats locationStats={DEMO_STATS} />
 			</Container>
 		</div>
 	);
 }
 
-// Render helpers
+function LocationDetailsMobile({ locationName, locationDetails }) {
+	// Styles
+	const classes = useStyles();
+
+	// State
+	const [open, setOpen] = React.useState(false);
+	const toggleOpen = () => setOpen((currentState) => !currentState);
+
+	return (
+		<Container>
+			<LocationTitle>
+				{locationName}
+				<IconButton onClick={toggleOpen}>
+					<InfoIcon />
+				</IconButton>
+			</LocationTitle>
+			<hr />
+
+			<LocationDetailsDialog
+				locationName={locationName}
+				locationDetails={locationDetails}
+				open={open}
+				onClose={toggleOpen}
+			/>
+		</Container>
+	);
+}
+
+function LocationDetailsDialog({
+	locationName,
+	locationDetails,
+	open,
+	onClose,
+}) {
+	// Styles
+	const classes = useStyles();
+
+	return (
+		<Dialog
+			onClose={onClose}
+			aria-labelledby="location-dialog-title"
+			open={open}
+		>
+			<MuiDialogTitle>
+				<Typography variant="h6">{locationName}</Typography>
+				<IconButton
+					aria-label="close"
+					onClick={onClose}
+					className={classes.closeButton}
+				>
+					<CloseIcon />
+				</IconButton>
+			</MuiDialogTitle>
+
+			<MuiDialogContent dividers>
+				<LocationImage
+					locationName={locationName}
+					image={locationDetails.image}
+				/>
+				<LocationSummary locationSummary={locationDetails.summary} />
+				<LocationStats locationStats={DEMO_STATS} />
+			</MuiDialogContent>
+		</Dialog>
+	);
+}
+
+function LocationTitle(props) {
+	const classes = useStyles();
+	return (
+		<Typography
+			component="h1"
+			variant="h6"
+			className={classes.locationTitle}
+			color="textSecondary"
+			gutterBottom
+		>
+			{props.children}
+		</Typography>
+	);
+}
+
+function LocationImage({ locationName, image }) {
+	const classes = useStyles();
+	return (
+		<Box display="flex">
+			<Box m="auto">
+				<img
+					className={classes.locationImg}
+					src={`/images/location_images/${image}`}
+					alt={`Rent prices in ${locationName}`}
+				/>
+			</Box>
+		</Box>
+	);
+}
+
+function LocationSummary({ locationSummary }) {
+	const classes = useStyles();
+	return (
+		<Typography
+			component="p"
+			variant="body2"
+			className={classes.locationDescription}
+		>
+			{locationSummary}
+		</Typography>
+	);
+}
+
 function LocationStats({ locationStats }) {
 	const classes = useStyles();
 
@@ -156,7 +262,7 @@ function LocationStats({ locationStats }) {
 		<div>
 			{locationStats.map(({ title, stats }, i) => (
 				<div key={i}>
-					{/* Stat group title  TODO change to h2*/}
+					{/* Stat group title */}
 					{title ? (
 						<Typography
 							component="h2"
