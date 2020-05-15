@@ -38,6 +38,15 @@ def clean_data(df):
                                     0] if len(county.split()) > 1 else county)
     df = df.drop(columns=['Location'])
 
+    # Fix location spelling mistakes
+    spelling_fixes = {
+        'Phibsboro': 'Phibsborough',
+        'Ballisodare': 'Ballysadare',
+        'Ford': 'Kilmuckridge',
+        'Glen': 'Glin'
+    }
+    df = df.replace({"Town": spelling_fixes})
+
     # Create Location Type
     county_rows = df['Town'].isnull() & df['PostCode'].isnull()
     post_code_rows = df['Town'].isnull() & ~county_rows
@@ -137,6 +146,8 @@ def format_rent_data(df):
 
 
 if __name__ == "__main__":
+    logging.info('--- Starting ---')
+    
     # Load data
     px = pyaxis.parse(RAW_DATA_PATH, encoding='ISO-8859-2')
     df = px['DATA']
@@ -162,3 +173,5 @@ if __name__ == "__main__":
 
     logging.info(
         f'--- Rent data written to {os.path.abspath(output_filepath)} ---')
+
+    logging.info('--- Finished ---')
