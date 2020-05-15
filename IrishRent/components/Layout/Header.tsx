@@ -317,9 +317,10 @@ function SearchBar({ locations }: { locations: AllLocationsRecord }) {
 				freeSolo
 				options={inputValue.length > 0 ? options : []}
 				onInputChange={(e, newInput) => setInputValue(newInput)}
-				getOptionLabel={(option: Location) => typeof option === "string"
-						? option
-						: getLocationName(option);
+				getOptionLabel={(option: Location) => 
+					typeof option === "string" 
+						? option 
+						: getLocationName(option)
 				}
 				filterOptions={filterOptions}
 				renderInput={(params) => <InputRender params={params} />}

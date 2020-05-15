@@ -7,8 +7,8 @@ import RentData from "../../lib/RentData/RentData";
 export default function Location({ locationName, locationData, locations }) {
 	return (
 		<Layout locations={locations}>
-			<LocationDetails locationName={locationName} open={true} />
-			<p>The Data</p>
+			<LocationDetails locationName={locationName} locationDetails={locationData.details} />
+	<p>Data</p>
 		</Layout>
 	);
 }

@@ -13,6 +13,7 @@ export interface LocationData {
 	priceData: {
 		[key: string]: PriceRecord;
 	};
+	details: LocationWikiContent;
 }
 
 export interface AllLocationsRecord {
@@ -35,4 +36,9 @@ export interface PriceRecord {
 	prices: {
 		[key: string]: number;
 	};
+}
+
+export interface LocationWikiContent {
+	summary: string;
+	image: string;
 }

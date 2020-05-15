@@ -12,10 +12,10 @@ import { getLocationName } from "../Utils";
 export default class RentData {
 	/** TODO */
 	private static instance: RentData;
-	private dataFilePath = path.join(
+	private rentDataFilePath = path.join(
 		process.cwd(),
 		"data",
-		"rent_data_2020-05-11-16-08-04.json"
+		"rent_data_2020-05-15-13-14-55.json"
 	);
 
 	private counties: LocationTypeData;
@@ -26,7 +26,7 @@ export default class RentData {
 	private currentQuarter = 4; // TODO include in data export
 
 	private constructor() {
-		let rawRentData = fs.readFileSync(this.dataFilePath);
+		let rawRentData = fs.readFileSync(this.rentDataFilePath);
 		let rentData: RentDataContent = JSON.parse(rawRentData.toString());
 
 		this.counties = rentData.County;

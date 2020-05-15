@@ -5,6 +5,7 @@ import List from "@material-ui/core/List";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
+import Box from "@material-ui/core/Box";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import PeopleIcon from "@material-ui/icons/People";
@@ -14,7 +15,6 @@ import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
 import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
 
 // TODO Place holder data
-const DEMO_ABSTRACT = `Rathmines (Irish: Ráth Maonais, meaning "ringfort of Maonas") is an inner suburb on the southside of Dublin, about 3 kilometres south of the city centre. It effectively begins at the south side of the Grand Canal and stretches along the Rathmines Road as far as Rathgar to the south, Ranelagh to the east and Harold's Cross to the west. It is situated in the city's Dublin 6 postal district.`;
 const DEMO_STATS = [
 	{
 		title: null,
@@ -62,8 +62,9 @@ const useStyles = makeStyles((theme) => ({
 		overflowY: "scroll",
 	},
 	locationImg: {
-		width: "100%",
-		borderRadius: "5%",
+		maxWidth: "100%",
+		maxHeight: 400,
+		borderRadius: "10px",
 		marginBottom: theme.spacing(2),
 	},
 	locationTitle: {
@@ -75,7 +76,7 @@ const useStyles = makeStyles((theme) => ({
 	hide: { display: "none" },
 }));
 
-export default function locationDetails({ locationName, open }) {
+export default function locationDetails({ locationName, locationDetails }) {
 	// Styles
 	const classes = useStyles();
 
@@ -121,11 +122,15 @@ export default function locationDetails({ locationName, open }) {
 				</Typography>
 
 				{/* Location Image */}
-				<img
-					className={classes.locationImg}
-					src="/images/DEMO_LOCATION_IMAGE.jpg"
-					alt={`Rent Prices in ${locationName}`}
-				/>
+				<Box display="flex">
+					<Box m="auto">
+						<img
+							className={classes.locationImg}
+							src={`/images/location_images/${locationDetails.image}`}
+							alt={`Rent Prices in ${locationName}`}
+						/>
+					</Box>
+				</Box>
 
 				{/* Location Description */}
 				<Typography
@@ -133,7 +138,7 @@ export default function locationDetails({ locationName, open }) {
 					variant="body2"
 					className={classes.locationDescription}
 				>
-					{DEMO_ABSTRACT}
+					{locationDetails.summary}
 				</Typography>
 
 				{/* Location Stats */}

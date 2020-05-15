@@ -12,6 +12,7 @@ from utils import replace_item_in_dict, get_location_name
 NAN_REPLACE = 'Missing'
 RAW_DATA_PATH = os.path.join(
     'raw_data', 'Quarter_Location_PropertyType_NumbBed(2007Q4-2019Q4)2020_04_22.px')
+WIKI_CONTENT_PATH = os.path.join('clean_data', 'wiki_data_2020-05-15-11-19-37.json')
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s:%(levelname)s:%(message)s')
@@ -145,6 +146,12 @@ def format_rent_data(df):
     return rent_data
 
 
+def add_wiki_contnet(rent_data, wiki_content):
+    for location_type, location_type_data in rent_data.items():
+        for location_name, location_data in location_type_data.items():
+            location_data['details'] = wiki_content[location_type][location_name]
+
+
 if __name__ == "__main__":
     logging.info('--- Starting ---')
     
@@ -162,6 +169,15 @@ if __name__ == "__main__":
     logging.info('Formating rent data ...')
     start_time = time.time()
     rent_data = format_rent_data(df)
+    logging.info(f'--- Finished in {time.time() - start_time :.2f}sec ---')
+
+    # Add wiki details
+    logging.info('Adding location wiki content ...')
+    start_time = time.time()
+    wiki_content = None
+    with open(WIKI_CONTENT_PATH) as fp:
+        wiki_content = json.load(fp)
+    add_wiki_contnet(rent_data, wiki_content)
     logging.info(f'--- Finished in {time.time() - start_time :.2f}sec ---')
 
     # Write data to JSON
