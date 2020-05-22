@@ -7,7 +7,7 @@ import {
 	AllLocationsRecord,
 	Location,
 } from "./RentData_interfaces";
-import { getLocationName } from "../Utils";
+import { getLocationName, selectNRandom } from "../Utils";
 
 export default class RentData {
 	/** TODO */
@@ -104,5 +104,40 @@ export default class RentData {
 			throw new Error(
 				`ERROR: No location with name ${locationName} found.`
 			);
+	}
+
+	// TODO make variables for number of comparisons
+	public getComparisonLocations(
+		referenceLocation: Location
+	): {
+		parent?: LocationData;
+		neighbors: LocationData[];
+	} {
+		if (
+			referenceLocation.locationType === "Town" ||
+			referenceLocation.locationType === "PostCode"
+		) {
+			let parent = this.counties[referenceLocation.county];
+			let similarLocations = Object.values(
+				referenceLocation.locationType === "Town"
+					? this.towns
+					: this.postcodes
+			).filter(
+				(location) =>
+					location.location.county === referenceLocation.county &&
+					getLocationName(location.location) !==
+						getLocationName(referenceLocation)
+			);
+			let neighbors = selectNRandom(similarLocations, 3);
+			return { parent, neighbors };
+		} else {
+			let similarLocations = Object.values(this.counties).filter(
+				(location) =>
+					getLocationName(location.location) !==
+					getLocationName(referenceLocation)
+			);
+			let neighbors = selectNRandom(similarLocations, 4);
+			return { neighbors };
+		}
 	}
 }

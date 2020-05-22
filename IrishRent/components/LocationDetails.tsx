@@ -90,6 +90,7 @@ export default function locationDetails({
 	locationName,
 	locationDetails,
 	onLargeScreen,
+	containerHeight,
 }) {
 	return (
 		<>
@@ -97,6 +98,7 @@ export default function locationDetails({
 				<LocationDetailsDesktop
 					locationName={locationName}
 					locationDetails={locationDetails}
+					containerHeight={containerHeight}
 				/>
 			) : (
 				<LocationDetailsMobile
@@ -109,30 +111,16 @@ export default function locationDetails({
 }
 
 // Render helpers
-function LocationDetailsDesktop({ locationName, locationDetails }) {
+function LocationDetailsDesktop({
+	locationName,
+	locationDetails,
+	containerHeight,
+}) {
 	// Styles
 	const classes = useStyles();
 
-	// State
-	const sidebar = useRef(null);
-	const [height, setHeight] = useState(null);
-
-	const setSidebarHeight = () => {
-		const heightOfSide =
-			window.innerHeight -
-			(sidebar.current?.getBoundingClientRect().top || 0);
-		setHeight(heightOfSide);
-	};
-
-	useEffect(() => {
-		/* set hight of side bar to reach bottom of screen 
-			and add event listener to update height on resize */
-		setSidebarHeight();
-		window.addEventListener("resize", setSidebarHeight);
-	}, []);
-
 	return (
-		<div ref={sidebar} className={classes.sidebar} style={{ height }}>
+		<div className={classes.sidebar} style={{ height: containerHeight }}>
 			<Container>
 				<LocationTitle>{locationName}</LocationTitle>
 				<LocationImage
@@ -190,7 +178,9 @@ function LocationDetailsDialog({
 			open={open}
 		>
 			<MuiDialogTitle>
-				<Typography variant="h6">{locationName}</Typography>
+				<Typography component="p" variant="h6">
+					{locationName}
+				</Typography>
 				<IconButton
 					aria-label="close"
 					onClick={onClose}

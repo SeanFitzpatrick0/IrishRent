@@ -16,8 +16,10 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.51",
     "autosuggest-highlight": "^3.1.1",
+    "chart.js": "^2.9.3",
     "next": "^9.3.6",
     "react": "^16.13.1",
+    "react-chartjs-2": "^2.9.0",
     "react-dom": "^16.13.1",
     "react-google-charts": "^3.0.15",
     "react-share": "^4.1.0"
