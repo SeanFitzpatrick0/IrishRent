@@ -10,12 +10,21 @@ import {
 import { getLocationName, selectNRandom } from "../Utils";
 
 export default class RentData {
-	/** TODO */
+
+	public static PROPERTY_TYPES = [
+		"Any",
+		"Detached",
+		"Semi Detached",
+		"Terrace",
+		"Flat",
+	];
+	public static BED_TYPES = ["Any", "1", "2", "3", "1-2", "1-3", "4+"];
+	
 	private static instance: RentData;
 	private rentDataFilePath = path.join(
 		process.cwd(),
 		"data",
-		"rent_data_2020-05-15-13-14-55.json"
+		"rent_data_2020-05-25-12-43-45.json"
 	);
 
 	private counties: LocationTypeData;

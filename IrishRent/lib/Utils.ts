@@ -91,7 +91,7 @@ export function getRentChange(
 	newQuarter: number,
 	oldYear: number,
 	oldQuarter: number
-): [string, string] {
+): { percentage: string; absolute: string; hasDecreased: boolean } | undefined {
 	/** Get the percentage and absolute change in rent price as strings */
 	if (oldYear > newYear || (oldYear === newYear && oldQuarter > newQuarter))
 		throw new Error(
@@ -100,15 +100,19 @@ export function getRentChange(
 
 	const oldValue = locationPrices.prices[`${oldYear}Q${oldQuarter}`];
 	const newValue = locationPrices.prices[`${newYear}Q${newQuarter}`];
-	const absoluteDifference = newValue - oldValue;
-	const percentageDifference = (absoluteDifference / oldValue) * 100;
 
-	return [
-		percentageDifference.toFixed(2) + "%",
-		`${absoluteDifference >= 0 ? "+" : "-"} €${Math.abs(
-			absoluteDifference
-		).toFixed(2)}`,
-	];
+	if (oldValue !== null && newValue !== null) {
+		const absoluteDifference = newValue - oldValue;
+		const percentageDifference = (absoluteDifference / oldValue) * 100;
+
+		return {
+			percentage: percentageDifference.toFixed(2) + "%",
+			absolute: `${absoluteDifference >= 0 ? "+" : "-"} €${Math.abs(
+				absoluteDifference
+			).toFixed(2)}`,
+			hasDecreased: absoluteDifference < 0,
+		};
+	}
 }
 
 export function getLocationColor(

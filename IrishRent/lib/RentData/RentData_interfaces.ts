@@ -31,7 +31,7 @@ export interface Location {
 }
 
 export interface PriceRecord {
-	propertyType: "Any" | "Detached" | "SemiDetached" | "Terrace" | "Flat";
+	propertyType: "Any" | "Detached" | "Semi Detached" | "Terrace" | "Flat";
 	beds: "Any" | "1" | "2" | "3" | "1-2" | "1-3" | "4+";
 	prices: {
 		[key: string]: number;

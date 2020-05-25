@@ -1,23 +1,31 @@
+import React, { useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import Divider from "@material-ui/core/Divider";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+import InputLabel from "@material-ui/core/InputLabel";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import MenuItem from "@material-ui/core/MenuItem";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
-import { getLocationName } from "../lib/Utils";
-import Divider from "@material-ui/core/Divider";
 import green from "@material-ui/core/colors/green";
-import { getRentChange, getLocationColor } from "../lib/Utils";
+import { getLocationName, getRentChange, getLocationColor } from "../lib/Utils";
 
 // Constants
 const MONTHS_PER_QUARTER = 3;
+const SELECT_OPTION_DEFAULT = "Any";
+const NO_DATA_LABEL = "No Data";
 
 // Styles definition
 const useStyles = makeStyles((theme) => ({
 	wrapper: {
 		width: "100%",
 		paddingTop: theme.spacing(3),
-		paddingsBottom: theme.spacing(7),
+		paddingBottom: theme.spacing(7),
 	},
 	chartTile: { fontSize: 25 },
 	chartDescription: { margin: theme.spacing(1) },
@@ -28,10 +36,20 @@ export default function RentDetails({
 	locationName,
 	locationData,
 	comparisons,
+	detailsOptions,
 	onLargeScreen,
 	containerHeight,
 }) {
+	// Styles
 	const classes = useStyles();
+
+	// State
+	const [propertyType, setPropertyType] = useState("Any");
+	const [bedsType, setBedsType] = useState("Any");
+	const optionsState = {
+		propertyType: { value: propertyType, setValue: setPropertyType },
+		bedsType: { value: bedsType, setValue: setBedsType },
+	};
 
 	return (
 		<div
@@ -43,49 +61,119 @@ export default function RentDetails({
 			}
 		>
 			<Container>
-				<Typography
-					component="h2"
-					variant="h4"
-					align="center"
-					color="textSecondary"
-					gutterBottom
-				>
-					Im looking for …
-				</Typography>
-
-				<PriceFilters />
+				<PriceOptions
+					detailsOptions={detailsOptions}
+					optionsState={optionsState}
+				/>
 
 				<AveragePriceBarChart
 					locationName={locationName}
 					locationData={locationData}
 					comparisons={comparisons}
+					propertyType={propertyType}
+					bedsType={bedsType}
 				/>
 
 				<PricesOverTimeLineChart
 					locationData={locationData}
 					comparisons={comparisons}
+					propertyType={propertyType}
+					bedsType={bedsType}
 				/>
 			</Container>
 		</div>
 	);
 }
 
-function PriceFilters() {
-	// TODO
-	return <p>[Price Filters]</p>;
+function PriceOptions({ detailsOptions, optionsState }) {
+	const selectionsData = [
+		{
+			label: "Property Type",
+			options: detailsOptions.propertyTypes,
+			help: "Filter by property type",
+			value: optionsState.propertyType.value,
+			setValue: optionsState.propertyType.setValue,
+		},
+		{
+			label: "Beds",
+			options: detailsOptions.bedTypes,
+			help: "Filter by bedrooms",
+			value: optionsState.bedsType.value,
+			setValue: optionsState.bedsType.setValue,
+		},
+	];
+
+	return (
+		<div>
+			<Typography
+				component="h2"
+				variant="h4"
+				align="center"
+				color="textSecondary"
+				gutterBottom
+			>
+				I'm looking for …
+			</Typography>
+
+			<Grid container justify="center" spacing={6}>
+				{selectionsData.map((option) => {
+					const idRoot = option.label
+						.replace(/\s+/g, "-")
+						.toLowerCase();
+					const labelId = idRoot + "-select-label";
+					const selectId = idRoot + "-select";
+
+					return (
+						<Grid item>
+							<FormControl key={option.label}>
+								<InputLabel id={labelId}>
+									{option.label}
+								</InputLabel>
+
+								<Select
+									labelId={labelId}
+									id={selectId}
+									value={option.value}
+									onChange={(e) =>
+										option.setValue(
+											e.target.value as string
+										)
+									}
+									displayEmpty
+								>
+									{option.options.map((value) => (
+										<MenuItem key={value} value={value}>
+											{value}
+										</MenuItem>
+									))}
+								</Select>
+								<FormHelperText>{option.help}</FormHelperText>
+							</FormControl>
+						</Grid>
+					);
+				})}
+			</Grid>
+		</div>
+	);
 }
 
-function AveragePriceBarChart({ locationName, locationData, comparisons }) {
+function AveragePriceBarChart({
+	locationName,
+	locationData,
+	comparisons,
+	propertyType,
+	bedsType,
+}) {
+	// Styles
 	const classes = useStyles();
 
-	// TODO dont hard code these values
-	const averagePrice = locationData.priceData["Any_Any"].prices["2019Q4"];
+	// State
+	const averagePrice =
+		locationData.priceData[`${propertyType}_${bedsType}`].prices["2019Q4"];
 
-	// Create dataset for locations
 	const locations = [locationData, ...comparisons.neighbors];
 	if (comparisons.parent) locations.unshift(comparisons.parent);
 
-	// Create a dataset for each location
 	const locationsData = locations.map((location) => {
 		const label = getLocationName(location.location);
 		let [borderColor, backgroundColor] = getLocationColor(
@@ -95,14 +183,18 @@ function AveragePriceBarChart({ locationName, locationData, comparisons }) {
 		);
 
 		// Get price data points
-		// TODO dont hard code these values
-		const data = [location.priceData["Any_Any"].prices["2019Q4"]];
+		const data = [
+			location.priceData[`${propertyType}_${bedsType}`].prices["2019Q4"],
+		];
 
 		return { label, data, borderColor, backgroundColor, borderWidth: 1 };
 	});
 
 	const data = { labels: ["Average Rent"], datasets: locationsData };
-	const options = { hover: { mode: "point" } };
+	const options = {
+		hover: { mode: "point" },
+		scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
+	};
 
 	return (
 		<div>
@@ -125,8 +217,14 @@ function AveragePriceBarChart({ locationName, locationData, comparisons }) {
 				color="textSecondary"
 				className={classes.chartDescription}
 			>
-				Average rent in {locationName} is{" "}
-				<b>€{averagePrice.toFixed(2)}</b>
+				{averagePrice ? (
+					<>
+						Average rent in {locationName} is{" "}
+						<b>€{averagePrice.toFixed(2)}</b>
+					</>
+				) : (
+					<>{NO_DATA_LABEL}</>
+				)}
 			</Typography>
 
 			<Bar data={data} options={options} />
@@ -134,34 +232,41 @@ function AveragePriceBarChart({ locationName, locationData, comparisons }) {
 	);
 }
 
-function PricesOverTimeLineChart({ locationData, comparisons }) {
+function PricesOverTimeLineChart({
+	locationData,
+	comparisons,
+	propertyType,
+	bedsType,
+}) {
+	// Styles
 	const classes = useStyles();
 
-	// Get percentage & absolute increase
-	// TODO dont hard code these values
-	const [percentageChange, absoluteChange] = getRentChange(
-		locationData.priceData["Any_Any"],
+	// State
+	/* get percentage & absolute increase */
+	const rentChange = getRentChange(
+		locationData.priceData[`${propertyType}_${bedsType}`],
 		2019,
 		4,
 		2018,
 		4
 	);
-	const arrowIcon = absoluteChange.includes("+") ? (
-		<ArrowUpwardIcon
-			className={classes.directionArrow}
-			style={{ color: green[500] }}
-		/>
-	) : (
+	/* direction arrow */
+	const arrowIcon = rentChange?.hasDecreased ? (
 		<ArrowDownwardIcon
 			className={classes.directionArrow}
 			style={{ color: "tomato" }}
 		/>
+	) : (
+		<ArrowUpwardIcon
+			className={classes.directionArrow}
+			style={{ color: green[500] }}
+		/>
 	);
 
+	/* create datasets */
 	const locations = [locationData, ...comparisons.neighbors];
 	if (comparisons.parent) locations.unshift(comparisons.parent);
 
-	// Create a dataset for each location
 	const locationsData = locations.map((location) => {
 		const label = getLocationName(location.location);
 		let [borderColor, backgroundColor] = getLocationColor(
@@ -170,19 +275,18 @@ function PricesOverTimeLineChart({ locationData, comparisons }) {
 			comparisons.parent && getLocationName(comparisons.parent.location)
 		);
 
-		// Get price data points
 		const data = [];
-		Object.entries(location.priceData["Any_Any"].prices).forEach(
-			([k, v]) => {
-				// Convert Year, Quarter to date
-				let [year, quarter] = k.toString().split("Q");
-				let month = parseInt(quarter) * MONTHS_PER_QUARTER;
-				let date = new Date(parseInt(year), month);
+		Object.entries(
+			location.priceData[`${propertyType}_${bedsType}`].prices
+		).forEach(([k, v]) => {
+			// Convert Year, Quarter to date
+			let [year, quarter] = k.toString().split("Q");
+			let month = parseInt(quarter) * MONTHS_PER_QUARTER;
+			let date = new Date(parseInt(year), month);
 
-				// Add non null data
-				if (v) data.push({ x: date, y: v });
-			}
-		);
+			// Add non null data
+			if (v) data.push({ x: date, y: v });
+		});
 
 		return { label, data, borderColor, backgroundColor, fill: "none" };
 	});
@@ -206,7 +310,9 @@ function PricesOverTimeLineChart({ locationData, comparisons }) {
 			>
 				Price Changes
 			</Typography>
+
 			<Divider light />
+
 			<Typography
 				component="p"
 				variant="subtitle1"
@@ -214,10 +320,17 @@ function PricesOverTimeLineChart({ locationData, comparisons }) {
 				color="textSecondary"
 				className={classes.chartDescription}
 			>
-				{arrowIcon}
-				<b>{percentageChange}</b> | <b>{absoluteChange}</b> since last
-				year
+				{rentChange ? (
+					<>
+						{arrowIcon}
+						<b>{rentChange.percentage}</b> |{" "}
+						<b>{rentChange.absolute}</b> since last year
+					</>
+				) : (
+					<>{NO_DATA_LABEL}</>
+				)}
 			</Typography>
+			
 			<Line data={data} options={options} />
 		</div>
 	);

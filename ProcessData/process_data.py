@@ -92,7 +92,7 @@ def clean_data(df):
     df['PropertyType'] = df['PropertyType'].map({
         'All property types': 'Any',
         'Detached house': 'Detached',
-        'Semi detached house': 'SemiDetached',
+        'Semi detached house': 'Semi Detached',
         'Terrace house': 'Terrace',
         'Other flats': 'Flat'
     })

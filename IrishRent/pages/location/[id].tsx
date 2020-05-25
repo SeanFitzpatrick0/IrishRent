@@ -6,6 +6,7 @@ import Layout from "../../components/Layout/Layout";
 import LocationDetails from "../../components/LocationDetails";
 import RentDetails from "../../components/RentDetails";
 import RentData from "../../lib/RentData/RentData";
+import {getLocationName} from "../../lib/Utils"
 
 // Styles definition
 const useStyles = makeStyles((theme) => ({
@@ -13,10 +14,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Location({
-	locationName,
 	locationData,
 	comparisons,
 	locations,
+	detailsOptions,
 }) {
 	// Styles
 	const classes = useStyles();
@@ -47,15 +48,16 @@ export default function Location({
 				className={onLargeScreen ? classes.withSidebar : null}
 			>
 				<LocationDetails
-					locationName={locationName}
+					locationName={getLocationName(locationData.location)}
 					locationDetails={locationData.details}
 					onLargeScreen={onLargeScreen}
 					containerHeight={height}
 				/>
 				<RentDetails
-					locationName={locationName}
+					locationName={getLocationName(locationData.location)}
 					locationData={locationData}
 					comparisons={comparisons}
+					detailsOptions={detailsOptions}
 					onLargeScreen={onLargeScreen}
 					containerHeight={height}
 				/>
@@ -76,5 +78,10 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 	const locationData = rentData.getLocationData(locationName);
 	const comparisons = rentData.getComparisonLocations(locationData.location);
 	const locations = rentData.getLocations();
-	return { props: { locationName, locationData, comparisons, locations } };
+	const detailsOptions = {
+		propertyTypes: RentData.PROPERTY_TYPES,
+		bedTypes: RentData.BED_TYPES,
+	};
+
+	return { props: { locationData, comparisons, locations, detailsOptions } };
 };
