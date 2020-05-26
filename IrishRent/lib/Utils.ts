@@ -17,6 +17,7 @@ export function getLocationName(location: Location): string {
 	}
 }
 
+// TODO can replace with lodash function ???
 export function chunkArray(array: any[], numChunks: number): any[] {
 	/** Splits array into array of arrays of equal size */
 	if (numChunks <= 0)

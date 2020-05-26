@@ -18,10 +18,5 @@ export const getStaticProps: GetStaticProps = async () => {
 	const locations = rentData.getLocations();
 	const countyPrices = rentData.getCurrentCountiesPrices();
 
-	return {
-		props: {
-			locations,
-			countyPrices,
-		},
-	};
+	return { props: { locations, countyPrices } };
 };

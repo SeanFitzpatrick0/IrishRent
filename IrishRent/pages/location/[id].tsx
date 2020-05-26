@@ -6,7 +6,7 @@ import Layout from "../../components/Layout/Layout";
 import LocationDetails from "../../components/LocationDetails";
 import RentDetails from "../../components/RentDetails";
 import RentData from "../../lib/RentData/RentData";
-import {getLocationName} from "../../lib/Utils"
+import { getLocationName } from "../../lib/Utils";
 
 // Styles definition
 const useStyles = makeStyles((theme) => ({

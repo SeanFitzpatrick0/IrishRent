@@ -10,7 +10,6 @@ import {
 import { getLocationName, selectNRandom } from "../Utils";
 
 export default class RentData {
-
 	public static PROPERTY_TYPES = [
 		"Any",
 		"Detached",
@@ -19,7 +18,7 @@ export default class RentData {
 		"Flat",
 	];
 	public static BED_TYPES = ["Any", "1", "2", "3", "1-2", "1-3", "4+"];
-	
+
 	private static instance: RentData;
 	private rentDataFilePath = path.join(
 		process.cwd(),
@@ -58,6 +57,12 @@ export default class RentData {
 		let towns: Location[] = Object.values(this.towns).map(
 			(town) => town.location
 		);
+
+		/* Sort postcodes by number */
+		postcodes.sort((a, b) =>
+			a.postcode.localeCompare(b.postcode, undefined, { numeric: true })
+		);
+
 		return { counties, postcodes, towns };
 	}
 
@@ -116,6 +121,7 @@ export default class RentData {
 	}
 
 	// TODO make variables for number of comparisons
+	// TODO fix bug if there isnt enough comparisons in a county (e.g. county in carlow)
 	public getComparisonLocations(
 		referenceLocation: Location
 	): {
