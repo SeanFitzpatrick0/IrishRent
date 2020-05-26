@@ -1,5 +1,6 @@
+import Link from "next/link";
 import Router from "next/router";
-import React from "react";
+import { useState } from "react";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import AppBar from "@material-ui/core/AppBar";
@@ -37,11 +38,12 @@ const useStyles = makeStyles((theme) => ({
 	grow: {
 		flexGrow: 1,
 	},
-	title: {
+	logo: {
 		display: "none",
 		[theme.breakpoints.up("sm")]: {
 			display: "block",
-			width: "auto",
+			height: "2.5em",
+			margin: theme.spacing(1.5),
 		},
 		[theme.breakpoints.up("md")]: {
 			marginLeft: theme.spacing(6),
@@ -117,11 +119,10 @@ export default function Header({
 	const [
 		accountActionsAnchorElement,
 		setAccountActionsAnchorElement,
-	] = React.useState(null);
-	const [
-		mobileMenuAnchorElement,
-		setMobileMenuAnchorElement,
-	] = React.useState(null);
+	] = useState(null);
+	const [mobileMenuAnchorElement, setMobileMenuAnchorElement] = useState(
+		null
+	);
 
 	const isAccountActionsMenuOpen = Boolean(accountActionsAnchorElement);
 	const isMobileMenuOpen = Boolean(mobileMenuAnchorElement);
@@ -142,10 +143,16 @@ export default function Header({
 		<div>
 			<AppBar position="static">
 				<Toolbar>
-					{/* Brand */}
-					<Typography className={classes.title} variant="h6" noWrap>
-						IrishRent.ie
-					</Typography>
+					{/* Logo */}
+					<Link href="/">
+						<a>
+							<img
+								className={classes.logo}
+								src="/images/icon/full_logo.svg"
+								alt="Irishrent.ie Logo"
+							/>
+						</a>
+					</Link>
 
 					{/* Search Bar */}
 					<SearchBar locations={locations} />
@@ -263,7 +270,7 @@ function SearchBar({ locations }: { locations: AllLocationsRecord }) {
 		trim: true,
 		limit: 5,
 	});
-	const [inputValue, setInputValue] = React.useState("");
+	const [inputValue, setInputValue] = useState("");
 
 	// Handle Search
 	const handelSubmit = (e) => {
@@ -317,9 +324,9 @@ function SearchBar({ locations }: { locations: AllLocationsRecord }) {
 				freeSolo
 				options={inputValue.length > 0 ? options : []}
 				onInputChange={(e, newInput) => setInputValue(newInput)}
-				getOptionLabel={(option: Location) => 
-					typeof option === "string" 
-						? option 
+				getOptionLabel={(option: Location) =>
+					typeof option === "string"
+						? option
 						: getLocationName(option)
 				}
 				filterOptions={filterOptions}

@@ -12,21 +12,27 @@ class MyDocument extends Document {
 	render() {
 		return (
 			<Html lang="en">
-				<Head />
-				<meta charSet="utf-8" />
-				<meta
-					name="viewport"
-					content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
-				/>
-				<link
-					rel="stylesheet"
-					href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-				/>
-				<link
-					rel="stylesheet"
-					href="https://fonts.googleapis.com/icon?family=Material+Icons"
-				/>
-				<meta name="theme-color" content={theme.palette.primary.main} />
+				<Head>
+					<meta charSet="utf-8" />
+					<link rel="shortcut icon" href="/images/icon/logo.ico" />
+					<meta
+						name="viewport"
+						content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
+					/>
+					<link
+						rel="stylesheet"
+						href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+					/>
+					<link
+						rel="stylesheet"
+						href="https://fonts.googleapis.com/icon?family=Material+Icons"
+					/>
+					<meta
+						name="theme-color"
+						content={theme.palette.primary.main}
+					/>
+				</Head>
+
 				<body>
 					<Main />
 					<NextScript />
