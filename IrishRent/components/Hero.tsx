@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Button from "@material-ui/core/Button";
@@ -58,14 +59,18 @@ export default function Hero({ countyPrices }) {
 			<div className={classes.heroButtons}>
 				<Grid container spacing={2} justify="center">
 					<Grid item>
-						<Button variant="contained" color="primary">
-							View Dublin Prices
-						</Button>
+						<Link href="/location/[id]" as="/location/Dublin">
+							<Button variant="contained" color="primary">
+								<a>View Dublin Prices</a>
+							</Button>
+						</Link>
 					</Grid>
 					<Grid item>
-						<Button variant="outlined" color="primary">
-							View locations
-						</Button>
+						<Link href="/location">
+							<Button variant="outlined" color="primary">
+								<a>View locations</a>
+							</Button>
+						</Link>
 					</Grid>
 				</Grid>
 			</div>

@@ -128,7 +128,10 @@ function LocationDetailsDesktop({
 					image={locationDetails.image}
 				/>
 				<LocationSummary locationSummary={locationDetails.summary} />
-				<LocationStats locationStats={DEMO_STATS} />
+				{/* 
+					UNCOMMENT TO ADD LOCATION STATS
+					<LocationStats locationStats={DEMO_STATS} /> 
+				*/}
 			</Container>
 		</div>
 	);
@@ -196,7 +199,10 @@ function LocationDetailsDialog({
 					image={locationDetails.image}
 				/>
 				<LocationSummary locationSummary={locationDetails.summary} />
-				<LocationStats locationStats={DEMO_STATS} />
+
+				{/* UNCOMMENT TO ADD LOCATION STATS
+					<LocationStats locationStats={DEMO_STATS} /> 
+				*/}
 			</MuiDialogContent>
 		</Dialog>
 	);
@@ -208,6 +214,7 @@ function LocationTitle(props) {
 		<Typography
 			component="h1"
 			variant="h6"
+			align="center"
 			className={classes.locationTitle}
 			color="textSecondary"
 			gutterBottom

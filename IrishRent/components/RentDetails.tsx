@@ -16,8 +16,8 @@ import green from "@material-ui/core/colors/green";
 import { getLocationName, getRentChange, getLocationColor } from "../lib/Utils";
 
 // Constants
+const QUARTER_PER_YEAR = 4;
 const MONTHS_PER_QUARTER = 3;
-const SELECT_OPTION_DEFAULT = "Any";
 const NO_DATA_LABEL = "No Data";
 
 // Styles definition
@@ -79,6 +79,7 @@ export default function RentDetails({
 					comparisons={comparisons}
 					propertyType={propertyType}
 					bedsType={bedsType}
+					onLargeScreen={onLargeScreen}
 				/>
 			</Container>
 		</div>
@@ -124,8 +125,8 @@ function PriceOptions({ detailsOptions, optionsState }) {
 					const selectId = idRoot + "-select";
 
 					return (
-						<Grid item>
-							<FormControl key={option.label}>
+						<Grid item key={option.label}>
+							<FormControl>
 								<InputLabel id={labelId}>
 									{option.label}
 								</InputLabel>
@@ -237,6 +238,7 @@ function PricesOverTimeLineChart({
 	comparisons,
 	propertyType,
 	bedsType,
+	onLargeScreen,
 }) {
 	// Styles
 	const classes = useStyles();
@@ -278,14 +280,15 @@ function PricesOverTimeLineChart({
 		const data = [];
 		Object.entries(
 			location.priceData[`${propertyType}_${bedsType}`].prices
-		).forEach(([k, v]) => {
+		).forEach(([k, v], i) => {
 			// Convert Year, Quarter to date
 			let [year, quarter] = k.toString().split("Q");
 			let month = parseInt(quarter) * MONTHS_PER_QUARTER;
 			let date = new Date(parseInt(year), month);
 
-			// Add non null data
-			if (v) data.push({ x: date, y: v });
+			// Only add one point per year on small screen
+			if (onLargeScreen || i % QUARTER_PER_YEAR === 0)
+				if (v) data.push({ x: date, y: v }); // Add non null data
 		});
 
 		return { label, data, borderColor, backgroundColor, fill: "none" };
@@ -330,7 +333,7 @@ function PricesOverTimeLineChart({
 					<>{NO_DATA_LABEL}</>
 				)}
 			</Typography>
-			
+
 			<Line data={data} options={options} />
 		</div>
 	);

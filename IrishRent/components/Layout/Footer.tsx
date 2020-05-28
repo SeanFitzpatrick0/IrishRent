@@ -28,9 +28,7 @@ const useStyles = makeStyles((theme) => ({
 			listStyle: "none",
 		},
 	},
-	footer: { 
-		backgroundColor: "#5C5B5B",
-	 },
+	footer: { backgroundColor: "#5C5B5B" },
 	footerContainer: {
 		marginTop: theme.spacing(6),
 		paddingTop: theme.spacing(3),
@@ -52,37 +50,58 @@ const useStyles = makeStyles((theme) => ({
 			},
 		},
 	},
-	feedbackInputLabel: { color: fade(theme.palette.common.white, 0.65) },
+	feedbackInputLabel: {
+		color: fade(theme.palette.common.white, 0.65),
+		whiteSpace: "nowrap",
+		overflow: "hidden",
+		textOverflow: "ellipsis",
+		right: "60px", // Room for submit icon
+	},
 }));
 
 export default function Footer() {
 	const aboutContent = {
 		title: "About",
 		items: [
-			{ params: { label: "Contact", link: "#TODO" }, Render: FooterLink },
-			{
-				params: { label: "Advertisements", link: "#TODO" },
-				Render: FooterLink,
-			},
-			// { label: "Privacy policy", link: "#TODO" },
-			// { label: "Terms of use", link: "#TODO" },
+			{ params: { label: "Home", link: "/" }, Render: FooterLink },
+			{ params: { label: "About", link: "/#About" }, Render: FooterLink },
 		],
 	};
 	const popularLocations = {
 		title: "Popular Locations",
 		items: [
-			{ params: { label: "Dublin", link: "#TODO" }, Render: FooterLink },
-			{ params: { label: "Cork", link: "#TODO" }, Render: FooterLink },
-			{ params: { label: "Galway", link: "#TODO" }, Render: FooterLink },
-			{ params: { label: "Kildare", link: "#TODO" }, Render: FooterLink },
 			{
-				params: { label: "Drogheda", link: "#TODO" },
+				params: { label: "Dublin", link: "/location/Dublin" },
 				Render: FooterLink,
 			},
-			{ params: { label: "Swords", link: "#TODO" }, Render: FooterLink },
-			{ params: { label: "Dundalk", link: "#TODO" }, Render: FooterLink },
-			{ params: { label: "Bray", link: "#TODO" }, Render: FooterLink },
-			{ params: { label: "Navan", link: "#TODO" }, Render: FooterLink },
+			{
+				params: { label: "Cork", link: "/location/Cork" },
+				Render: FooterLink,
+			},
+			{
+				params: { label: "Galway", link: "/location/Galway" },
+				Render: FooterLink,
+			},
+			{
+				params: { label: "Kildare", link: "/location/Kildare" },
+				Render: FooterLink,
+			},
+			{
+				params: { label: "Drogheda", link: "/location/Drogheda" },
+				Render: FooterLink,
+			},
+			{
+				params: { label: "Swords", link: "/location/Swords" },
+				Render: FooterLink,
+			},
+			{
+				params: { label: "Bray", link: "/location/Bray" },
+				Render: FooterLink,
+			},
+			{
+				params: { label: "Navan", link: "/location/Navan" },
+				Render: FooterLink,
+			},
 		],
 	};
 	const finalColumn = {
@@ -101,7 +120,7 @@ export default function Footer() {
 					<FooterColumn content={aboutContent} numbSubColumns={1} />
 					<FooterColumn
 						content={popularLocations}
-						numbSubColumns={3}
+						numbSubColumns={2}
 					/>
 					<FooterColumn content={finalColumn} numbSubColumns={1} />
 				</Grid>
@@ -122,7 +141,7 @@ function Copyright() {
 			align="center"
 		>
 			{"Copyright © "}
-			<Link color="inherit" href="#TODO">
+			<Link color="inherit" href="/">
 				IrishRent.ie
 			</Link>{" "}
 			{new Date().getFullYear()}

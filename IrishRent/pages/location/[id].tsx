@@ -10,6 +10,7 @@ import { getLocationName } from "../../lib/Utils";
 
 // Styles definition
 const useStyles = makeStyles((theme) => ({
+	container: { margin: "auto", width: "100%" },
 	withSidebar: { display: "inherit" },
 }));
 
@@ -45,7 +46,9 @@ export default function Location({
 		<Layout locations={locations}>
 			<div
 				ref={container}
-				className={onLargeScreen ? classes.withSidebar : null}
+				className={`${onLargeScreen ? classes.withSidebar : ""} ${
+					classes.container
+				}`}
 			>
 				<LocationDetails
 					locationName={getLocationName(locationData.location)}

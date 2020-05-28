@@ -2,7 +2,6 @@ import Link from "next/link";
 import Router from "next/router";
 import { useState } from "react";
 import { fade, makeStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import InputBase from "@material-ui/core/InputBase";
@@ -15,9 +14,6 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import SearchIcon from "@material-ui/icons/Search";
 import MoreIcon from "@material-ui/icons/MoreVert";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import PersonIcon from "@material-ui/icons/Person";
-import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import LocationCityIcon from "@material-ui/icons/LocationCity";
 import ContactSupportIcon from "@material-ui/icons/ContactSupport";
 import parse from "autosuggest-highlight/parse";
@@ -162,30 +158,37 @@ export default function Header({
 
 					{/* Desktop Links */}
 					<div className={classes.linksDesktop}>
-						<Button
-							className={classes.navLink}
-							href="#TODO"
-							color="secondary"
-						>
-							Locations
-						</Button>
-						<Button
-							className={classes.navLink}
-							href="#TODO"
-							color="secondary"
-						>
-							Contact
-						</Button>
-						<IconButton
-							edge="end"
-							aria-label="user account actions"
-							aria-haspopup="true"
-							color="inherit"
-							aria-controls={ACCOUNT_ACTIONS_MENU_ID}
-							onClick={handleAccountActionsOpen}
-						>
-							<AccountCircle style={{ fontSize: 30 }} />
-						</IconButton>
+						<Link href="/location">
+							<Button
+								className={classes.navLink}
+								color="secondary"
+							>
+								Locations
+							</Button>
+						</Link>
+
+						<Link href="/#about">
+							<Button
+								className={classes.navLink}
+								color="secondary"
+							>
+								About
+							</Button>
+						</Link>
+
+						{/* 
+							(UNCOMMENT TO ADD USER ACCOUNT ACTIONS)
+							<IconButton
+								edge="end"
+								aria-label="user account actions"
+								aria-haspopup="true"
+								color="inherit"
+								aria-controls={ACCOUNT_ACTIONS_MENU_ID}
+								onClick={handleAccountActionsOpen}
+							>
+								<AccountCircle style={{ fontSize: 30 }} />
+							</IconButton> 
+						*/}
 					</div>
 
 					{/* Mobile Links Menu */}
@@ -204,6 +207,7 @@ export default function Header({
 			</AppBar>
 
 			{/* Account Actions Menu (Desktop) */}
+			{/* UNCOMMENT TO ADD USER ACTIONS 
 			<HeaderMenu
 				anchorElement={accountActionsAnchorElement}
 				id={ACCOUNT_ACTIONS_MENU_ID}
@@ -213,7 +217,9 @@ export default function Header({
 					{ Icon: PersonIcon, label: "Log in" },
 					{ Icon: PersonAddIcon, label: "Register" },
 				]}
-			/>
+			/> 
+			*/}
+
 			{/* All Actions Menu (Mobile) */}
 			<HeaderMenu
 				anchorElement={mobileMenuAnchorElement}
@@ -221,10 +227,19 @@ export default function Header({
 				isOpen={isMobileMenuOpen}
 				handelClose={closeMenus}
 				items={[
-					{ Icon: LocationCityIcon, label: "Locations" },
-					{ Icon: ContactSupportIcon, label: "Contact" },
-					{ Icon: PersonIcon, label: "Log in" },
-					{ Icon: PersonAddIcon, label: "Register" },
+					{
+						Icon: LocationCityIcon,
+						label: "Locations",
+						href: "/location",
+					},
+					{
+						Icon: ContactSupportIcon,
+						label: "About",
+						href: "/#about",
+					},
+					// UNCOMMENT TO ADD ACCOUNT ACTIONS
+					// { Icon: PersonIcon, label: "Log in" },
+					// { Icon: PersonAddIcon, label: "Register" },
 				]}
 			/>
 		</div>
@@ -243,12 +258,16 @@ function HeaderMenu({ anchorElement, id, isOpen, handelClose, items }) {
 			open={isOpen}
 			onClose={handelClose}
 		>
-			{items.map(({ Icon, label }, i) => (
+			{items.map(({ Icon, label, href }, i) => (
 				<MenuItem key={i} onClick={handelClose}>
-					<IconButton color="inherit">
-						<Icon aria-label={label} />
-					</IconButton>
-					<p>{label}</p>
+					<Link href={href}>
+						<>
+							<IconButton color="inherit">
+								<Icon aria-label={label} />
+							</IconButton>
+							<p>{label}</p>
+						</>
+					</Link>
 				</MenuItem>
 			))}
 		</Menu>

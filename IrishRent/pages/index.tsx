@@ -1,13 +1,18 @@
 import { GetStaticProps } from "next";
+import Container from "@material-ui/core/Container";
 import RentData from "../lib/RentData/RentData";
 import Layout from "../components/Layout/Layout";
 import Hero from "../components/Hero";
+import About from "../components/About";
 
 export default function Home({ locations, countyPrices }) {
 	return (
 		<>
 			<Layout locations={locations}>
-				<Hero countyPrices={countyPrices} />
+				<Container>
+					<Hero countyPrices={countyPrices} />
+					<About />
+				</Container>
 			</Layout>
 		</>
 	);
