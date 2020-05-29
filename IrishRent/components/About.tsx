@@ -89,6 +89,15 @@ export default function About() {
 						</Link>
 						.
 					</Typography>
+
+					<Typography component="p" variant="body1">
+						If you have any questions or feedback, please contact us
+						at{" "}
+						<Link href="mailto:contact@Irishrent.ie">
+							<a>contact@Irishrent.ie</a>
+						</Link>
+						.
+					</Typography>
 				</CardContent>
 			</Card>
 		</Container>
