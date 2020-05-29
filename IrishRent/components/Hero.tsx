@@ -10,7 +10,7 @@ import CountyMap from "./CountyMap";
 const useStyles = makeStyles((theme) => ({
 	heroWrapper: {
 		paddingTop: theme.spacing(4),
-		paddingBottom: theme.spacing(15),
+		paddingBottom: theme.spacing(10),
 	},
 	heroSubtitle: { [theme.breakpoints.down("sm")]: { display: "none" } },
 	heroButtons: { marginTop: theme.spacing(4) },
@@ -46,7 +46,7 @@ export default function Hero({ countyPrices }) {
 				>
 					Looking to rent a house or apartment at the right price?
 				</Box>
-				<b>IrishRent.ie</b> give you rent prices for locations in
+				<b>Irishrent.ie</b> give you rent prices for locations in
 				Ireland to help you find the best place to rent.
 			</Typography>
 

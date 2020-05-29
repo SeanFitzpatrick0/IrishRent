@@ -142,7 +142,7 @@ function Copyright() {
 		>
 			{"Copyright © "}
 			<Link color="inherit" href="/">
-				IrishRent.ie
+				Irishrent.ie
 			</Link>{" "}
 			{new Date().getFullYear()}
 			{"."}
