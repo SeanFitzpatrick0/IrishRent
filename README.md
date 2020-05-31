@@ -19,3 +19,4 @@ https://statbank.cso.ie/px/pxeirestat/Statire/SelectVarVal/Define.asp?maintable=
 * More options for price changes chart (year range and point per year).
 * Add similar locations links in bottom of rent details page
 * Add a contact email and who made this site
+* Add loading icon for map at start

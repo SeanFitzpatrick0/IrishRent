@@ -95,8 +95,8 @@ export default function About() {
 						at{" "}
 						<Link href="mailto:contact@Irishrent.ie">
 							<a>contact@Irishrent.ie</a>
-						</Link>
-						.
+						</Link>{" "}
+						or submit it in the input at the bottom of the page.
 					</Typography>
 				</CardContent>
 			</Card>

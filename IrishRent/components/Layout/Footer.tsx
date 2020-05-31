@@ -1,13 +1,15 @@
+import { useState, useEffect } from "react";
+import { makeStyles, fade } from "@material-ui/core/styles";
+import green from "@material-ui/core/colors/green";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
 import Box from "@material-ui/core/Box";
 import TextField from "@material-ui/core/TextField";
-import FormControl from "@material-ui/core/FormControl";
-import PublishIcon from "@material-ui/icons/Publish";
 import IconButton from "@material-ui/core/IconButton";
-import { makeStyles, fade } from "@material-ui/core/styles";
+import PublishIcon from "@material-ui/icons/Publish";
+import DoneIcon from "@material-ui/icons/Done";
 import {
 	EmailShareButton,
 	EmailIcon,
@@ -49,6 +51,7 @@ const useStyles = makeStyles((theme) => ({
 				borderColor: fade(theme.palette.common.white, 0.65),
 			},
 		},
+		"& label.Mui-disabled": { color: green[400] },
 	},
 	feedbackInputLabel: {
 		color: fade(theme.palette.common.white, 0.65),
@@ -229,9 +232,47 @@ function ShareIcons() {
 }
 
 function FeedbackInput() {
+	// Styles
 	const classes = useStyles();
+
+	// State
+	const [feedback, setFeedback] = useState("");
+	const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+	const [errorMessage, setErrorMessage] = useState(null);
+
+	const Icon = feedbackSubmitted ? DoneIcon : PublishIcon;
+	const label = feedbackSubmitted
+		? "Thank you for feedback"
+		: "How can we improve ?";
+
+	// Handlers
+	const handelSubmit = async (e) => {
+		e.preventDefault();
+		const sentFromUrl = window.location.href;
+
+		// Send Feedback
+		fetch("/api/feedback", {
+			method: "POST",
+			body: JSON.stringify({ feedback, sentFromUrl }),
+		}).then(async (res) => {
+			if (res.status === 200) {
+				// Successful POST
+				setFeedback("");
+				setFeedbackSubmitted(true);
+			} else {
+				const errorMessage = await res.text();
+				setErrorMessage(errorMessage);
+			}
+		});
+	};
+
+	const handelChange = (e) => {
+		setFeedback(e.currentTarget.value);
+		setErrorMessage(null);
+	};
+
 	return (
-		<FormControl>
+		<form onSubmit={(e) => handelSubmit(e)} autoComplete="off">
 			<Typography
 				variant="h6"
 				gutterBottom
@@ -240,8 +281,13 @@ function FeedbackInput() {
 				Feedback
 			</Typography>
 			<TextField
+				value={feedback}
+				onChange={(e) => handelChange(e)}
+				disabled={feedbackSubmitted}
+				error={Boolean(errorMessage)}
+				helperText={errorMessage}
 				variant="outlined"
-				label="How can we improve"
+				label={label}
 				size="small"
 				color="secondary"
 				className={classes.feedbackInputRoot}
@@ -249,15 +295,11 @@ function FeedbackInput() {
 				InputProps={{
 					endAdornment: (
 						<IconButton
+							type="submit"
 							aria-label="Submit Feedback"
-							onClick={() => {
-								/* TODO */
-							}}
-							onMouseDown={() => {
-								/* TODO */
-							}}
+							disabled={feedbackSubmitted}
 						>
-							<PublishIcon
+							<Icon
 								className={classes.footerItem}
 								fontSize="small"
 							/>
@@ -265,6 +307,6 @@ function FeedbackInput() {
 					),
 				}}
 			/>
-		</FormControl>
+		</form>
 	);
 }
