@@ -9,6 +9,8 @@ import {
 } from "./RentData_interfaces";
 import { getLocationName, selectNRandom } from "../Utils";
 
+const NUMB_COMPARISONS = 4;
+
 export default class RentData {
 	public static PROPERTY_TYPES = [
 		"Any",
@@ -143,7 +145,11 @@ export default class RentData {
 					getLocationName(location.location) !==
 						getLocationName(referenceLocation)
 			);
-			let neighbors = selectNRandom(similarLocations, 3);
+			let numNeighbors =
+				similarLocations.length >= NUMB_COMPARISONS - 1
+					? NUMB_COMPARISONS - 1
+					: similarLocations.length;
+			let neighbors = selectNRandom(similarLocations, numNeighbors);
 			return { parent, neighbors };
 		} else {
 			let similarLocations = Object.values(this.counties).filter(
@@ -151,7 +157,12 @@ export default class RentData {
 					getLocationName(location.location) !==
 					getLocationName(referenceLocation)
 			);
-			let neighbors = selectNRandom(similarLocations, 4);
+
+			let numNeighbors =
+				similarLocations.length >= NUMB_COMPARISONS
+					? NUMB_COMPARISONS
+					: similarLocations.length;
+			let neighbors = selectNRandom(similarLocations, numNeighbors);
 			return { neighbors };
 		}
 	}
