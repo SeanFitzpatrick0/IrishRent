@@ -75,17 +75,14 @@ export default function About() {
 					<Typography component="p" variant="body1" gutterBottom>
 						Simply search for your location in the search bar or
 						explore all of our{" "}
-						<Link href="/location">
-							<a>locations</a>
-						</Link>
-						.
+						<Link href="/location">locations</Link>.
 					</Typography>
 
 					<Typography component="p" variant="body1" gutterBottom>
 						The information provided by this site uses the Average
 						Monthly Rent Report published by the{" "}
 						<Link href="https://www.rtb.ie/">
-							<a>Residential Tenancies Board (RTB)</a>
+							Residential Tenancies Board (RTB)
 						</Link>
 						.
 					</Typography>
@@ -94,7 +91,7 @@ export default function About() {
 						If you have any questions or feedback, please contact us
 						at{" "}
 						<Link href="mailto:contact@Irishrent.ie">
-							<a>contact@Irishrent.ie</a>
+							contact@Irishrent.ie
 						</Link>{" "}
 						or submit it in the input at the bottom of the page.
 					</Typography>
