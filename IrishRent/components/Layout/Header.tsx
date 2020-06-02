@@ -14,6 +14,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import SearchIcon from "@material-ui/icons/Search";
 import MoreIcon from "@material-ui/icons/MoreVert";
+import HomeIcon from "@material-ui/icons/Home";
 import LocationCityIcon from "@material-ui/icons/LocationCity";
 import ContactSupportIcon from "@material-ui/icons/ContactSupport";
 import parse from "autosuggest-highlight/parse";
@@ -228,6 +229,11 @@ export default function Header({
 				handelClose={closeMenus}
 				items={[
 					{
+						Icon: HomeIcon,
+						label: "Home",
+						href: "/",
+					},
+					{
 						Icon: LocationCityIcon,
 						label: "Locations",
 						href: "/location",
@@ -259,16 +265,14 @@ function HeaderMenu({ anchorElement, id, isOpen, handelClose, items }) {
 			onClose={handelClose}
 		>
 			{items.map(({ Icon, label, href }, i) => (
-				<MenuItem key={i} onClick={handelClose}>
-					<Link href={href}>
-						<>
-							<IconButton color="inherit">
-								<Icon aria-label={label} />
-							</IconButton>
-							<p>{label}</p>
-						</>
-					</Link>
-				</MenuItem>
+				<Link key={i} href={href}>
+					<MenuItem onClick={handelClose}>
+						<IconButton color="inherit">
+							<Icon aria-label={label} />
+						</IconButton>
+						<p>{label}</p>
+					</MenuItem>
+				</Link>
 			))}
 		</Menu>
 	);
