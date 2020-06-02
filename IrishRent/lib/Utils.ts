@@ -3,9 +3,12 @@ import blue from "@material-ui/core/colors/blue";
 import grey from "@material-ui/core/colors/grey";
 import {
 	Location,
+	LocationData,
 	AllLocationsRecord,
 	PriceRecord,
 } from "./RentData/RentData_interfaces";
+
+// TODO make fuct static and move to rentdata
 
 export function getLocationName(location: Location): string {
 	if (location.locationType === "County") return location.county;
@@ -86,6 +89,7 @@ export function selectNRandom(array: any[], n: number): any[] {
 	return result;
 }
 
+// TODO change to have same API as getAveragePrice
 export function getRentChange(
 	locationPrices: PriceRecord,
 	newYear: number,
@@ -128,4 +132,19 @@ export function getLocationColor(
 	if (isSearchLocation) return [green[500], green[200]];
 	else if (isParentLocation) return [blue[500], blue[200]];
 	else return [grey[400], grey[200]];
+}
+
+export function getAveragePrice(
+	locationData: LocationData,
+	propertyType: string,
+	bedsType: string,
+	year: number,
+	quarter: number
+): number | undefined {
+	// TODO make types a enum
+	// TODO check valid year and q
+
+	return locationData.priceData[`${propertyType}_${bedsType}`].prices[
+		`${year}Q${quarter}`
+	];
 }

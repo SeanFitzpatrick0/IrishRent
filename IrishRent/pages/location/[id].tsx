@@ -1,3 +1,4 @@
+import Head from "next/head";
 import { GetStaticProps, GetStaticPaths } from "next";
 import React, { useRef, useEffect, useState } from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -6,7 +7,12 @@ import Layout from "../../components/Layout/Layout";
 import LocationDetails from "../../components/LocationDetails";
 import RentDetails from "../../components/RentDetails";
 import RentData from "../../lib/RentData/RentData";
-import { getLocationName } from "../../lib/Utils";
+import { LocationData, Location } from "../../lib/RentData/RentData_interfaces";
+import {
+	getLocationName,
+	getAveragePrice,
+	getRentChange,
+} from "../../lib/Utils";
 
 // Styles definition
 const useStyles = makeStyles((theme) => ({
@@ -14,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 	withSidebar: { display: "inherit" },
 }));
 
-export default function Location({
+export default function LocationPage({
 	locationData,
 	comparisons,
 	locations,
@@ -42,31 +48,86 @@ export default function Location({
 		window.addEventListener("resize", setContainerHeight);
 	}, []);
 
+	const pageTitle = getPageTitle(locationData);
+	const pageDescription = getPageDescription(locationData, comparisons);
+
 	return (
-		<Layout locations={locations}>
-			<div
-				ref={container}
-				className={`${onLargeScreen ? classes.withSidebar : ""} ${
-					classes.container
-				}`}
-			>
-				<LocationDetails
-					locationName={getLocationName(locationData.location)}
-					locationDetails={locationData.details}
-					onLargeScreen={onLargeScreen}
-					containerHeight={height}
-				/>
-				<RentDetails
-					locationName={getLocationName(locationData.location)}
-					locationData={locationData}
-					comparisons={comparisons}
-					detailsOptions={detailsOptions}
-					onLargeScreen={onLargeScreen}
-					containerHeight={height}
-				/>
-			</div>
-		</Layout>
+		<>
+			<Head>
+				<title>{pageTitle}</title>
+				<meta name="description" content={pageDescription} />
+			</Head>
+
+			<Layout locations={locations}>
+				<div
+					ref={container}
+					className={`${onLargeScreen ? classes.withSidebar : ""} ${
+						classes.container
+					}`}
+				>
+					<LocationDetails
+						locationName={getLocationName(locationData.location)}
+						locationDetails={locationData.details}
+						onLargeScreen={onLargeScreen}
+						containerHeight={height}
+					/>
+					<RentDetails
+						locationName={getLocationName(locationData.location)}
+						locationData={locationData}
+						comparisons={comparisons}
+						detailsOptions={detailsOptions}
+						onLargeScreen={onLargeScreen}
+						containerHeight={height}
+					/>
+				</div>
+			</Layout>
+		</>
 	);
+}
+
+function getPageTitle(locationData: LocationData): string {
+	const locationName = getLocationName(locationData.location);
+	// TODO make year and date dynamic
+	const averagePrice = getAveragePrice(locationData, "Any", "Any", 2019, 4);
+	let title = `Rent in ${locationName}`;
+	/* add average price */
+	if (averagePrice)
+		title += ` | Average rent price in ${locationName} is €${averagePrice}`;
+	return title;
+}
+
+function getPageDescription(locationData: LocationData, comparisons): string {
+	const locationName = getLocationName(locationData.location);
+	// TODO make year and date dynamic
+	const averagePrice = getAveragePrice(locationData, "Any", "Any", 2019, 4);
+	const rentChange = getRentChange(
+		locationData.priceData["Any_Any"],
+		2019,
+		4,
+		2018,
+		4
+	);
+	let description = `View ${locationName} Rent Prices. `;
+
+	/* Add average price and price movement details */
+	if (averagePrice)
+		description += `The average rent price in ${locationName} is €${averagePrice}`;
+	if (rentChange)
+		description += ` and has ${
+			rentChange.hasDecreased ? "decreases" : "increased"
+		} by ${rentChange.percentage} | ${rentChange.absolute} since last year. `;
+
+	/* Add comparison locations */
+	const locations = comparisons.neighbors.map((neighbor) =>
+		getLocationName(neighbor.location)
+	);
+	if (comparisons.parent)
+		locations.push(getLocationName(comparisons.parent.location));
+	description += `Also view rent prices in other locations, such as ${locations.join(
+		" | "
+	)}.`;
+
+	return description;
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {

@@ -13,7 +13,12 @@ import MenuItem from "@material-ui/core/MenuItem";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import green from "@material-ui/core/colors/green";
-import { getLocationName, getRentChange, getLocationColor } from "../lib/Utils";
+import {
+	getLocationName,
+	getRentChange,
+	getLocationColor,
+	getAveragePrice,
+} from "../lib/Utils";
 
 // Constants
 const QUARTER_PER_YEAR = 4;
@@ -169,8 +174,13 @@ function AveragePriceBarChart({
 	const classes = useStyles();
 
 	// State
-	const averagePrice =
-		locationData.priceData[`${propertyType}_${bedsType}`].prices["2019Q4"];
+	const averagePrice = getAveragePrice(
+		locationData,
+		propertyType,
+		bedsType,
+		2019,
+		4
+	);
 
 	const locations = [locationData, ...comparisons.neighbors];
 	if (comparisons.parent) locations.unshift(comparisons.parent);

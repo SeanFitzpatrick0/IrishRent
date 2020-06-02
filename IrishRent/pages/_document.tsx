@@ -15,6 +15,8 @@ class MyDocument extends Document {
 				<Head>
 					<meta charSet="utf-8" />
 
+					<meta name="robots" content="index, follow" />
+
 					{/* Favicon */}
 					<link
 						rel="apple-touch-icon"

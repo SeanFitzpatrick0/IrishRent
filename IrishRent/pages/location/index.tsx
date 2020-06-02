@@ -1,13 +1,24 @@
+import Head from "next/head";
 import { GetStaticProps } from "next";
 import Layout from "../../components/Layout/Layout";
 import RentData from "../../lib/RentData/RentData";
 import AllLocations from "../../components/AllLocations";
 
 export default function ({ locations }) {
+	const pageTitle = "Irishrent.ie | All Locations";
+	const pageDescription =
+		"View all towns and counties available on Irishrent.ie.";
+
 	return (
-		<Layout locations={locations}>
-			<AllLocations locations={locations} />
-		</Layout>
+		<>
+			<Head>
+				<title>{pageTitle}</title>
+				<meta name="description" content={pageDescription} />
+			</Head>
+			<Layout locations={locations}>
+				<AllLocations locations={locations} />
+			</Layout>
+		</>
 	);
 }
 
