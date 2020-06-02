@@ -194,35 +194,43 @@ function FooterLink({ label, link }) {
 }
 
 function ShareIcons() {
+	const shareUrl = "http://irishrent.ie";
+	const shareSubject = "View Rent Prices in Ireland at Irishrent.ie";
+	const shareMessage =
+		"Looking to rent a house or apartment at the right price?,\n" +
+		"Use Irishrent.ie to find rent prices for towns across Ireland to help you find the best place to rent.\n";
+
+	// Styles
 	const classes = useStyles();
+
 	return (
 		<>
 			<EmailShareButton
-				url={"#TODO"}
-				subject={"TODO"}
-				body={"TODO"}
+				url={shareUrl}
+				subject={shareSubject}
+				body={shareMessage}
 				className={classes.socialButton}
 			>
 				<EmailIcon size={32} round />
 			</EmailShareButton>
 			<WhatsappShareButton
-				url={"#TODO"}
-				title={"TODO"}
+				url={shareUrl}
+				title={shareSubject}
 				separator=":: "
 				className={classes.socialButton}
 			>
 				<WhatsappIcon size={32} round />
 			</WhatsappShareButton>
 			<TwitterShareButton
-				url={"#TODO"}
-				title={"TODO"}
+				url={shareUrl}
+				title={shareSubject}
 				className={classes.socialButton}
 			>
 				<TwitterIcon size={32} round />
 			</TwitterShareButton>
 			<FacebookShareButton
-				url={"#TODO"}
-				quote={"TODO"}
+				url={shareUrl}
+				quote={shareMessage}
 				className={classes.socialButton}
 			>
 				<FacebookIcon size={32} round />

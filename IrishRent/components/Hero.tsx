@@ -46,7 +46,7 @@ export default function Hero({ countyPrices }) {
 				>
 					Looking to rent a house or apartment at the right price?
 				</Box>
-				<b>Irishrent.ie</b> give you rent prices for locations in
+				Use <b>Irishrent.ie</b> to find rent prices for towns across
 				Ireland to help you find the best place to rent.
 			</Typography>
 
