@@ -2,9 +2,11 @@ import Link from "next/link";
 import Router from "next/router";
 import { useState } from "react";
 import { fade, makeStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import InputBase from "@material-ui/core/InputBase";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import Autocomplete, {
 	createFilterOptions,
 } from "@material-ui/lab/Autocomplete";
@@ -23,8 +25,7 @@ import {
 	Location,
 	AllLocationsRecord,
 } from "../../lib/RentData/RentData_interfaces";
-import { getLocationName, findLocationInRecords } from "../../lib/Utils";
-import { Typography } from "@material-ui/core";
+import { getLocationName } from "../../lib/Utils";
 
 // Constants
 const ACCOUNT_ACTIONS_MENU_ID = "users-actions-menu";
@@ -33,9 +34,7 @@ const SEARCH_BAR_PLACEHOLDER = "Search Location…";
 
 // Styles Definition
 const useStyles = makeStyles((theme) => ({
-	grow: {
-		flexGrow: 1,
-	},
+	grow: { flexGrow: 1 },
 	logo: {
 		display: "none",
 		[theme.breakpoints.up("sm")]: {
@@ -65,27 +64,11 @@ const useStyles = makeStyles((theme) => ({
 			width: "35%",
 		},
 	},
-	searchIcon: {
-		padding: theme.spacing(0, 2),
-		height: "100%",
-		position: "absolute",
-		pointerEvents: "none",
-		display: "flex",
-		alignItems: "center",
-		justifyContent: "center",
-	},
 	inputRoot: {
 		color: "inherit",
 		width: "100%",
 	},
-	inputInput: {
-		padding: theme.spacing(1, 1, 1, 0),
-		// vertical padding + font size from searchIcon
-		paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-		transition: theme.transitions.create("width"),
-		width: "100%",
-		[theme.breakpoints.up("md")]: { width: "100%" },
-	},
+	adornment: { marginLeft: theme.spacing(2) },
 	navLink: {
 		marginRight: theme.spacing(4),
 		textTransform: "capitalize",
@@ -304,34 +287,17 @@ function SearchBar({ locations }: { locations: AllLocationsRecord }) {
 	});
 	const [inputValue, setInputValue] = useState("");
 
-	// Handle Search
-	const handelSubmit = (e) => {
-		e.preventDefault();
-		const locationID = findLocationInRecords(inputValue, locations);
-		if (locationID)
+	// Handlers
+	const handelSearch = (value) => {
+		try {
+			const locationID = getLocationName(value);
 			Router.push("/location/[id]", `/location/${locationID}`);
-		else console.warn(`WARN: No Locations named ${inputValue}`); // TODO redirect to all locations page (maybe)
+		} catch (error) {
+			console.warn(`Unable to find location (${JSON.stringify(value)})`);
+		}
 	};
 
-	// Render Helpers
-	const InputRender = ({ params }) => (
-		<>
-			<div className={classes.searchIcon}>
-				<SearchIcon />
-			</div>
-			<InputBase
-				ref={params.InputProps.ref}
-				inputProps={params.inputProps}
-				placeholder={SEARCH_BAR_PLACEHOLDER}
-				autoFocus
-				classes={{
-					root: classes.inputRoot,
-					input: classes.inputInput,
-				}}
-			/>
-		</>
-	);
-
+	// Render Helper
 	const SuggestionRender = ({ option, inputValue }) => {
 		const locationName = getLocationName(option);
 		const matches = match(locationName, inputValue);
@@ -352,24 +318,38 @@ function SearchBar({ locations }: { locations: AllLocationsRecord }) {
 
 	// Render
 	return (
-		<form className={classes.search} onSubmit={handelSubmit.bind(this)}>
-			<Autocomplete
-				freeSolo
-				options={inputValue.length > 0 ? options : []}
-				onInputChange={(e, newInput) => setInputValue(newInput)}
-				getOptionLabel={(option: Location) =>
-					typeof option === "string"
-						? option
-						: getLocationName(option)
-				}
-				filterOptions={filterOptions}
-				renderInput={(params) => <InputRender params={params} />}
-				groupBy={(option: Location) => option.locationType}
-				renderOption={(option: Location, { inputValue }) => (
-					<SuggestionRender option={option} inputValue={inputValue} />
-				)}
-				blurOnSelect={true}
-			/>
-		</form>
+		<Autocomplete
+			className={classes.search}
+			freeSolo
+			blurOnSelect
+			onChange={(e, value) => handelSearch(value)}
+			options={inputValue.length > 0 ? options : []}
+			onInputChange={(e, newInput) => setInputValue(newInput)}
+			getOptionLabel={(option: Location) =>
+				typeof option === "string" ? option : getLocationName(option)
+			}
+			groupBy={(option: Location) => option.locationType}
+			filterOptions={filterOptions}
+			renderInput={(params) => (
+				<InputBase
+					startAdornment={
+						<InputAdornment
+							position="start"
+							className={classes.adornment}
+						>
+							<SearchIcon />
+						</InputAdornment>
+					}
+					ref={params.InputProps.ref}
+					inputProps={params.inputProps}
+					placeholder={SEARCH_BAR_PLACEHOLDER}
+					autoFocus
+					classes={{ root: classes.inputRoot }}
+				/>
+			)}
+			renderOption={(option: Location, { inputValue }) => (
+				<SuggestionRender option={option} inputValue={inputValue} />
+			)}
+		/>
 	);
 }

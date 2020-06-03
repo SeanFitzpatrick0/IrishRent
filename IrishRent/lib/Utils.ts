@@ -13,11 +13,14 @@ import {
 export function getLocationName(location: Location): string {
 	if (location.locationType === "County") return location.county;
 	else if (location.locationType === "PostCode") return location.postcode;
-	else {
+	else if (location.locationType === "Town")
 		return location.inMultipleCounties
 			? `${location.town} (${location.county})`
 			: location.town;
-	}
+	else
+		throw new Error(
+			`Error: Invalid location type (${location.locationType})`
+		);
 }
 
 // TODO can replace with lodash function ???
@@ -41,21 +44,6 @@ export function chunkArray(array: any[], numChunks: number): any[] {
 		chunkStart += chunkSize;
 	}
 	return result;
-}
-
-export function findLocationInRecords(
-	locationName: string,
-	locationRecords: AllLocationsRecord
-): string | undefined {
-	for (const locationType in locationRecords) {
-		const typeLocations = locationRecords[locationType];
-		const foundLocation = typeLocations.find(
-			(location) =>
-				getLocationName(location).toLowerCase() ===
-				locationName.toLowerCase()
-		);
-		if (foundLocation) return getLocationName(foundLocation);
-	}
 }
 
 export function selectNRandom(array: any[], n: number): any[] {
