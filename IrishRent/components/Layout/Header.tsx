@@ -24,6 +24,7 @@ import {
 	AllLocationsRecord,
 } from "../../lib/RentData/RentData_interfaces";
 import { getLocationName, findLocationInRecords } from "../../lib/Utils";
+import { Typography } from "@material-ui/core";
 
 // Constants
 const ACCOUNT_ACTIONS_MENU_ID = "users-actions-menu";
@@ -101,6 +102,7 @@ const useStyles = makeStyles((theme) => ({
 		display: "flex",
 		[theme.breakpoints.up("md")]: { display: "none" },
 	},
+	menuItem: { marginLeft: theme.spacing(2) },
 }));
 
 export default function Header({
@@ -254,6 +256,8 @@ export default function Header({
 
 // Render Helpers
 function HeaderMenu({ anchorElement, id, isOpen, handelClose, items }) {
+	const classes = useStyles();
+
 	return (
 		<Menu
 			anchorEl={anchorElement}
@@ -265,14 +269,19 @@ function HeaderMenu({ anchorElement, id, isOpen, handelClose, items }) {
 			onClose={handelClose}
 		>
 			{items.map(({ Icon, label, href }, i) => (
-				<Link key={i} href={href}>
-					<MenuItem onClick={handelClose}>
+				<MenuItem key={i} onClick={handelClose}>
+					<Link href={href}>
 						<IconButton color="inherit">
 							<Icon aria-label={label} />
+							<Typography
+								className={classes.menuItem}
+								variant="body1"
+							>
+								{label}
+							</Typography>
 						</IconButton>
-						<p>{label}</p>
-					</MenuItem>
-				</Link>
+					</Link>
+				</MenuItem>
 			))}
 		</Menu>
 	);
@@ -322,6 +331,7 @@ function SearchBar({ locations }: { locations: AllLocationsRecord }) {
 			/>
 		</>
 	);
+
 	const SuggestionRender = ({ option, inputValue }) => {
 		const locationName = getLocationName(option);
 		const matches = match(locationName, inputValue);
@@ -358,6 +368,7 @@ function SearchBar({ locations }: { locations: AllLocationsRecord }) {
 				renderOption={(option: Location, { inputValue }) => (
 					<SuggestionRender option={option} inputValue={inputValue} />
 				)}
+				blurOnSelect={true}
 			/>
 		</form>
 	);
