@@ -1,9 +1,9 @@
 import ReactGA from "react-ga";
 
 export function initGA() {
-	if (process.env.GOOGLE_ANALYTICS_ID)
-		ReactGA.initialize(process.env.GOOGLE_ANALYTICS_ID);
-	else console.error("Unable to access GOOGLE_ANALYTICS_ID");
+	if (process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID)
+		ReactGA.initialize(process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID);
+	else console.error("Unable to access NEXT_PUBLIC_GOOGLE_ANALYTICS_ID");
 }
 
 export function logPageView() {
