@@ -3,10 +3,23 @@ import nodemailer from "nodemailer";
 const transporter = nodemailer.createTransport({
 	service: "gmail",
 	auth: {
-		user: process.env.EMAIL_USERNAME,
-		pass: process.env.EMAIL_PASSWORD,
+		user: getEmailCredentials().EMAIL_USERNAME,
+		pass: getEmailCredentials().EMAIL_PASSWORD,
 	},
 });
+
+function getEmailCredentials() {
+	const EMAIL_USERNAME = process.env.EMAIL_USERNAME;
+	const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
+	if (EMAIL_USERNAME && EMAIL_PASSWORD)
+		return { EMAIL_USERNAME, EMAIL_PASSWORD };
+	else
+		throw new Error(
+			`Unable to access email credential (${
+				!EMAIL_USERNAME ? "EMAIL_USERNAME" : ""
+			} ${!EMAIL_PASSWORD ? "EMAIL_PASSWORD" : ""})`
+		);
+}
 
 export function sendFeedbackEmail(
 	feedback: string,
@@ -32,5 +45,6 @@ export function sendFeedbackEmail(
 					error,
 				}}`
 			);
+		else console.log("Feedback email successfully sent");
 	});
 }
