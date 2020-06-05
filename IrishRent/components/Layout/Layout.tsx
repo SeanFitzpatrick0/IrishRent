@@ -26,10 +26,7 @@ export default function Layout({
 
 	useEffect(() => {
 		// Google Analytics
-		if (!window["GA_INITIALIZED"]) {
-			initGA();
-			window["GA_INITIALIZED"] = true;
-		}
+		initGA();
 		logPageView();
 	}, []);
 

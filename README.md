@@ -20,3 +20,5 @@ https://statbank.cso.ie/px/pxeirestat/Statire/SelectVarVal/Define.asp?maintable=
 * Add similar locations links in bottom of rent details page
 * Add a contact email and who made this site
 * Add loading icon for map at start
+* Add custom 404
+* Handel the search of unknown  locations
