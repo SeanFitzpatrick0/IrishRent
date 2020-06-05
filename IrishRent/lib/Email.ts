@@ -39,11 +39,11 @@ export function sendFeedbackEmail(
 	transporter.sendMail({ from, to, subject, html }, (error, data) => {
 		if (error)
 			console.error(
-				`ERROR: Unable to send feedback email.\n ${{
+				`Unable to send feedback email. ${JSON.stringify({
 					feedback,
 					sentFromUrl,
 					error,
-				}}`
+				})}`
 			);
 		else console.log("Feedback email successfully sent");
 	});
