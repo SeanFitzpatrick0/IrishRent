@@ -205,7 +205,6 @@ function AveragePriceBarChart({
 	const options = {
 		hover: { mode: "point" },
 		scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
-		maintainAspectRatio: false,
 	};
 
 	return (
@@ -311,7 +310,6 @@ function PricesOverTimeLineChart({
 	};
 	const options = {
 		scales: { xAxes: [{ type: "time", time: { unit: "year" } }] },
-		maintainAspectRatio: false,
 	};
 
 	return (
