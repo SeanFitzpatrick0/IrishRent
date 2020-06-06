@@ -62,7 +62,7 @@ export default function RentDetails({
 			style={
 				onLargeScreen
 					? { height: containerHeight, overflowY: "scroll" }
-					: {}
+					: { height: "100%" }
 			}
 		>
 			<Container>
@@ -205,6 +205,7 @@ function AveragePriceBarChart({
 	const options = {
 		hover: { mode: "point" },
 		scales: { yAxes: [{ ticks: { beginAtZero: true } }] },
+		maintainAspectRatio: false,
 	};
 
 	return (
@@ -310,6 +311,7 @@ function PricesOverTimeLineChart({
 	};
 	const options = {
 		scales: { xAxes: [{ type: "time", time: { unit: "year" } }] },
+		maintainAspectRatio: false,
 	};
 
 	return (

@@ -1,6 +1,7 @@
 import { Chart } from "react-google-charts";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 // Styles Definition
 const useStyles = makeStyles((theme) => ({
@@ -8,13 +9,18 @@ const useStyles = makeStyles((theme) => ({
 		display: "flex",
 		justifyContent: "center",
 		overflow: "hidden",
-		width: '100%'
+		width: "100%",
 	},
 	chart: {
 		minWidth: "500px",
 		position: "relative",
 		left: "50%",
 		transform: "translateX(-50%)",
+	},
+	loaderContainer: {
+		height: 300,
+		display: "flex",
+		alignItems: "center",
 	},
 }));
 
@@ -34,6 +40,11 @@ export default function CountyMap({ countyPrices }) {
 			<Chart
 				className={classes.chart}
 				chartType="GeoChart"
+				loader={
+					<div className={classes.loaderContainer}>
+						<CircularProgress size={70} />
+					</div>
+				}
 				data={[["City", "Average rent price (€)"], ...chartData]}
 				width="95%"
 				options={{
