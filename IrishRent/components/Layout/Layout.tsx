@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
 	page: {
 		display: "flex",
 		flexFlow: "column",
-		height: "100vh",
+		minHeight: "100vh",
 	},
 	main: { display: "flex", flexGrow: 1, width: "100%" },
 }));

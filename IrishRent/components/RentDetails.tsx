@@ -62,7 +62,7 @@ export default function RentDetails({
 			style={
 				onLargeScreen
 					? { height: containerHeight, overflowY: "scroll" }
-					: { height: "100%" }
+					: {}
 			}
 		>
 			<Container>
