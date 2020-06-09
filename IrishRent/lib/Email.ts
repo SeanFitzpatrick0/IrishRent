@@ -1,33 +1,20 @@
-import nodemailer from "nodemailer";
+import sgMail from "@sendgrid/mail";
 
-const transporter = nodemailer.createTransport({
-	service: "gmail",
-	auth: {
-		user: getEmailCredentials().EMAIL_USERNAME,
-		pass: getEmailCredentials().EMAIL_PASSWORD,
-	},
-	tls: { rejectUnauthorized: false },
-});
+const CONTACT_EMAIL = "contact@irishrent.ie";
+sgMail.setApiKey(getEmailApiKey());
 
-function getEmailCredentials() {
-	const EMAIL_USERNAME = process.env.EMAIL_USERNAME;
-	const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
-	if (EMAIL_USERNAME && EMAIL_PASSWORD)
-		return { EMAIL_USERNAME, EMAIL_PASSWORD };
-	else
-		throw new Error(
-			`Unable to access email credential (${
-				!EMAIL_USERNAME ? "EMAIL_USERNAME" : ""
-			} ${!EMAIL_PASSWORD ? "EMAIL_PASSWORD" : ""})`
-		);
+function getEmailApiKey() {
+	const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+	if (SENDGRID_API_KEY) return SENDGRID_API_KEY;
+	else throw new Error("Unable to access SENDGRID_API_KEY");
 }
 
-export function sendFeedbackEmail(
+export async function sendFeedbackEmail(
 	feedback: string,
 	sentFromUrl?: string
-): void {
-	const from = process.env.EMAIL_USERNAME;
-	const to = process.env.EMAIL_USERNAME;
+) {
+	const to = CONTACT_EMAIL;
+	const from = CONTACT_EMAIL;
 	const subject = "Web Feedback from Irishrent.ie";
 	const html = `
     <div>
@@ -35,17 +22,23 @@ export function sendFeedbackEmail(
 		<hr />
 		<p><b>Feedback: </b> ${feedback}</p>
         ${sentFromUrl ? `<p><b>Sent from URL: </b> ${sentFromUrl}</p>` : ""}
-    </div>`;
+	</div>`;
+	const message = { to, from, subject, html };
 
-	transporter.sendMail({ from, to, subject, html }, (error, data) => {
-		if (error)
-			console.error(
-				`Unable to send feedback email. ${JSON.stringify({
+	try {
+		await sgMail.send(message);
+		console.log("Feedback email successfully sent");
+	} catch (error) {
+		console.error(
+			`Unable to send feedback email. ${JSON.stringify(
+				{
 					feedback,
 					sentFromUrl,
 					error,
-				})}`
-			);
-		else console.log("Feedback email successfully sent");
-	});
+				},
+				null,
+				2
+			)}`
+		);
+	}
 }
