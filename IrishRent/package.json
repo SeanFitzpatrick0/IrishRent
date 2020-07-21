@@ -12,26 +12,26 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@material-ui/core": "^4.9.12",
+    "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
-    "@material-ui/lab": "^4.0.0-alpha.51",
-    "@sendgrid/mail": "^7.1.1",
+    "@material-ui/lab": "^4.0.0-alpha.56",
+    "@sendgrid/mail": "^7.2.1",
     "autosuggest-highlight": "^3.1.1",
     "chart.js": "^2.9.3",
-    "lodash": "^4.17.15",
-    "next": "^9.3.6",
-    "nodemailer": "^6.4.8",
+    "lodash": "^4.17.19",
+    "next": "^9.4.4",
+    "nodemailer": "^6.4.10",
     "react": "^16.13.1",
     "react-chartjs-2": "^2.9.0",
     "react-dom": "^16.13.1",
     "react-ga": "^2.7.0",
     "react-google-charts": "^3.0.15",
-    "react-share": "^4.1.0",
+    "react-share": "^4.2.1",
     "sendgrid": "^5.2.3"
   },
   "devDependencies": {
-    "@types/node": "^13.13.4",
-    "@types/react": "^16.9.34",
-    "typescript": "^3.8.3"
+    "@types/node": "^13.13.14",
+    "@types/react": "^16.9.43",
+    "typescript": "^3.9.7"
   }
 }

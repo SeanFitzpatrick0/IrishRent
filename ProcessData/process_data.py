@@ -11,8 +11,9 @@ from utils import replace_item_in_dict, get_location_name
 
 NAN_REPLACE = 'Missing'
 RAW_DATA_PATH = os.path.join(
-    'raw_data', 'Quarter_Location_PropertyType_NumbBed(2007Q4-2019Q4)2020_04_22.px')
-WIKI_CONTENT_PATH = os.path.join('clean_data', 'wiki_data_2020-05-15-11-19-37.json')
+    'raw_data', 'Quarter_Location_PropertyType_NumbBed(2007Q4-2020Q1)2020_07_17.px')
+WIKI_CONTENT_PATH = os.path.join(
+    'clean_data', 'wiki_data_2020-07-20-18-46-09.json')
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s:%(levelname)s:%(message)s')
@@ -27,12 +28,32 @@ def clean_data(df):
     df['Location'] = df['Location'].str.replace('-', ' ')
     df['Location'] = df['Location'].str.replace('.', '')
 
+    # Fix City & Towns locations
+    city_town_fixes = {
+        'Cork City': 'Cork City, Cork',
+        'Galway City': 'Galway City, Galway',
+        'Kilkenny City': 'Kilkenny City, Kilkenny',
+        'Limerick City': 'Limerick City, Limerick',
+        'Waterford City': 'Waterford City, Waterford',
+        'Carlow Town': 'Carlow Town, Carlow',
+        'Cavan Town': 'Cavan Town, Cavan',
+        'Donegal Town': 'Donegal Town, Donegal',
+        'Kildare Town': 'Kildare Town, Kildare',
+        'Longford Town': 'Longford Town, Longford',
+        'Louth Town': 'Louth Town, Louth',
+        'Monaghan Town': 'Monaghan Town, Monaghan',
+        'Roscommon Town': 'Roscommon Town, Roscommon',
+        'Sligo Town': 'Sligo Town, Sligo',
+        'Tipperary Town': 'Tipperary Town, Tipperary',
+        'Wicklow Town': 'Wicklow Town, Wicklow',
+    }
+    df = df.replace({"Location": city_town_fixes})
+
     # Break up Location
     df['Town'] = df['Location'].map(lambda location: location.split(',')[
                                     0].strip() if len(location.split(',')) > 1 else np.NaN)
     df['County'] = df['Location'].map(lambda location: location.split(',')[
                                       1].strip() if len(location.split(',')) > 1 else location.strip())
-    df['County'] = df['County'].str.replace(r' Town| City', '')
     df['PostCode'] = df['County'].map(
         lambda county: county if len(county.split()) > 1 else np.NaN)
     df['County'] = df['County'].map(lambda county: county.split()[
@@ -154,7 +175,7 @@ def add_wiki_contnet(rent_data, wiki_content):
 
 if __name__ == "__main__":
     logging.info('--- Starting ---')
-    
+
     # Load data
     px = pyaxis.parse(RAW_DATA_PATH, encoding='ISO-8859-2')
     df = px['DATA']

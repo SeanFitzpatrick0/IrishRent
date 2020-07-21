@@ -7,7 +7,10 @@ import Layout from "../../components/Layout/Layout";
 import LocationDetails from "../../components/LocationDetails";
 import RentDetails from "../../components/RentDetails";
 import RentData from "../../lib/RentData/RentData";
-import { LocationData, Location } from "../../lib/RentData/RentData_interfaces";
+import {
+	LocationData,
+	QuarterPeriod,
+} from "../../lib/RentData/RentData_interfaces";
 import {
 	getLocationName,
 	getAveragePrice,
@@ -25,6 +28,7 @@ export default function LocationPage({
 	comparisons,
 	locations,
 	detailsOptions,
+	currentPeriod,
 }) {
 	// Styles
 	const classes = useStyles();
@@ -48,8 +52,12 @@ export default function LocationPage({
 		window.addEventListener("resize", setContainerHeight);
 	}, []);
 
-	const pageTitle = getPageTitle(locationData);
-	const pageDescription = getPageDescription(locationData, comparisons);
+	const pageTitle = getPageTitle(locationData, currentPeriod);
+	const pageDescription = getPageDescription(
+		locationData,
+		comparisons,
+		currentPeriod
+	);
 
 	return (
 		<>
@@ -76,6 +84,7 @@ export default function LocationPage({
 						locationData={locationData}
 						comparisons={comparisons}
 						detailsOptions={detailsOptions}
+						currentPeriod={currentPeriod}
 						onLargeScreen={onLargeScreen}
 						containerHeight={height}
 					/>
@@ -85,10 +94,19 @@ export default function LocationPage({
 	);
 }
 
-function getPageTitle(locationData: LocationData): string {
+function getPageTitle(
+	locationData: LocationData,
+	currentPeriod: QuarterPeriod
+): string {
 	const locationName = getLocationName(locationData.location);
-	// TODO make year and date dynamic
-	const averagePrice = getAveragePrice(locationData, "Any", "Any", 2019, 4);
+	const { year, quarter } = currentPeriod;
+	const averagePrice = getAveragePrice(
+		locationData,
+		"Any",
+		"Any",
+		year,
+		quarter
+	);
 	let title = `Rent in ${locationName}`;
 	/* add average price */
 	if (averagePrice)
@@ -96,16 +114,21 @@ function getPageTitle(locationData: LocationData): string {
 	return title;
 }
 
-function getPageDescription(locationData: LocationData, comparisons): string {
+function getPageDescription(
+	locationData: LocationData,
+	comparisons,
+	currentPeriod: QuarterPeriod
+): string {
 	const locationName = getLocationName(locationData.location);
 	// TODO make year and date dynamic
-	const averagePrice = getAveragePrice(locationData, "Any", "Any", 2019, 4);
+	const { year, quarter } = currentPeriod;
+	const averagePrice = getAveragePrice(locationData, "Any", "Any", year, quarter);
 	const rentChange = getRentChange(
 		locationData.priceData["Any_Any"],
-		2019,
-		4,
-		2018,
-		4
+		year,
+		quarter,
+		year - 1,
+		quarter
 	);
 	let description = `View ${locationName} Rent Prices. `;
 
@@ -115,7 +138,9 @@ function getPageDescription(locationData: LocationData, comparisons): string {
 	if (rentChange)
 		description += ` and has ${
 			rentChange.hasDecreased ? "decreases" : "increased"
-		} by ${rentChange.percentage} | ${rentChange.absolute} since last year. `;
+		} by ${rentChange.percentage} | ${
+			rentChange.absolute
+		} since last year. `;
 
 	/* Add comparison locations */
 	const locations = comparisons.neighbors.map((neighbor) =>
@@ -146,6 +171,15 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 		propertyTypes: RentData.PROPERTY_TYPES,
 		bedTypes: RentData.BED_TYPES,
 	};
+	const currentPeriod = rentData.getCurrentPeriod();
 
-	return { props: { locationData, comparisons, locations, detailsOptions } };
+	return {
+		props: {
+			locationData,
+			comparisons,
+			locations,
+			detailsOptions,
+			currentPeriod,
+		},
+	};
 };

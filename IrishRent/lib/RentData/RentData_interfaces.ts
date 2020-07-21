@@ -42,3 +42,8 @@ export interface LocationWikiContent {
 	summary: string;
 	image: string;
 }
+
+export interface QuarterPeriod {
+	year: number;
+	quarter: number;
+}

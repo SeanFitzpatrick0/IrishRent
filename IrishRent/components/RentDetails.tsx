@@ -41,6 +41,7 @@ export default function RentDetails({
 	locationName,
 	locationData,
 	comparisons,
+	currentPeriod,
 	detailsOptions,
 	onLargeScreen,
 	containerHeight,
@@ -72,6 +73,7 @@ export default function RentDetails({
 				/>
 
 				<AveragePriceBarChart
+					currentPeriod={currentPeriod}
 					locationName={locationName}
 					locationData={locationData}
 					comparisons={comparisons}
@@ -80,6 +82,7 @@ export default function RentDetails({
 				/>
 
 				<PricesOverTimeLineChart
+					currentPeriod={currentPeriod}
 					locationData={locationData}
 					comparisons={comparisons}
 					propertyType={propertyType}
@@ -164,6 +167,7 @@ function PriceOptions({ detailsOptions, optionsState }) {
 }
 
 function AveragePriceBarChart({
+	currentPeriod,
 	locationName,
 	locationData,
 	comparisons,
@@ -174,12 +178,13 @@ function AveragePriceBarChart({
 	const classes = useStyles();
 
 	// State
+	const { year, quarter } = currentPeriod;
 	const averagePrice = getAveragePrice(
 		locationData,
 		propertyType,
 		bedsType,
-		2019,
-		4
+		year,
+		quarter
 	);
 
 	const locations = [locationData, ...comparisons.neighbors];
@@ -195,7 +200,9 @@ function AveragePriceBarChart({
 
 		// Get price data points
 		const data = [
-			location.priceData[`${propertyType}_${bedsType}`].prices["2019Q4"],
+			location.priceData[`${propertyType}_${bedsType}`].prices[
+				`${year}Q${quarter}`
+			],
 		];
 
 		return { label, data, borderColor, backgroundColor, borderWidth: 1 };
@@ -244,6 +251,7 @@ function AveragePriceBarChart({
 }
 
 function PricesOverTimeLineChart({
+	currentPeriod,
 	locationData,
 	comparisons,
 	propertyType,
@@ -254,13 +262,15 @@ function PricesOverTimeLineChart({
 	const classes = useStyles();
 
 	// State
+	const { year, quarter } = currentPeriod;
+
 	/* get percentage & absolute increase */
 	const rentChange = getRentChange(
 		locationData.priceData[`${propertyType}_${bedsType}`],
-		2019,
-		4,
-		2018,
-		4
+		year,
+		quarter,
+		year - 1,
+		quarter
 	);
 	/* direction arrow */
 	const arrowIcon = rentChange?.hasDecreased ? (

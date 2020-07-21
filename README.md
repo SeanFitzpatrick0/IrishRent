@@ -9,8 +9,8 @@ Query data here:
 https://statbank.cso.ie/px/pxeirestat/Statire/SelectVarVal/Define.asp?maintable=RIA02&PLanguage=0
 
 ## Features to Add
-* Add title and descriptions for each page
-* Add google analytics
+* Add message to say data was updated
+* Add test & refactor
 * link wiki page and reference image authors
 * add example search in the search bar if it has not been used for a set time
 * add compare location option on the rent price details
@@ -19,6 +19,6 @@ https://statbank.cso.ie/px/pxeirestat/Statire/SelectVarVal/Define.asp?maintable=
 * More options for price changes chart (year range and point per year).
 * Add similar locations links in bottom of rent details page
 * Add a contact email and who made this site
-* Add loading icon for map at start
 * Add custom 404
 * Handel the search of unknown  locations
+* Update material UI component 'Material-UI: the ExpansionPanel component was   renamed to Accordion to use a more common naming convention.'

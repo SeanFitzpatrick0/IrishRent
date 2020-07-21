@@ -6,6 +6,7 @@ import {
 	LocationData,
 	AllLocationsRecord,
 	Location,
+	QuarterPeriod,
 } from "./RentData_interfaces";
 import { getLocationName, selectNRandom } from "../Utils";
 
@@ -25,15 +26,15 @@ export default class RentData {
 	private rentDataFilePath = path.join(
 		process.cwd(),
 		"data",
-		"rent_data_2020-05-25-12-43-45.json"
+		"rent_data_2020-07-20-18-56-48.json"
 	);
 
 	private counties: LocationTypeData;
 	private postcodes: LocationTypeData;
 	private towns: LocationTypeData;
 
-	private currentYear = 2019; // TODO include in data export
-	private currentQuarter = 4; // TODO include in data export
+	private currentYear = 2020; // TODO include in data export
+	private currentQuarter = 1; // TODO include in data export
 
 	private constructor() {
 		let rawRentData = fs.readFileSync(this.rentDataFilePath);
@@ -47,6 +48,10 @@ export default class RentData {
 	static getInstance(): RentData {
 		if (!RentData.instance) RentData.instance = new RentData();
 		return RentData.instance;
+	}
+
+	public getCurrentPeriod(): QuarterPeriod {
+		return { year: this.currentYear, quarter: this.currentQuarter };
 	}
 
 	public getLocations(): AllLocationsRecord {

@@ -2,19 +2,14 @@ import os
 import time
 import json
 import requests
-import logging
 import concurrent.futures
 import urllib.request
 import wikipediaapi
 import pandas as pd
 
-# TODO fix logging
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s:%(levelname)s:%(message)s')
-
 # Path to cleaned rent data, (update with the current version of file)
 CLEAN_RENT_DATA_PATH = os.path.join(
-    'clean_data', 'rent_data_2020-05-12-17-10-38.json')
+    'clean_data', 'rent_data_2020-07-20-18-42-39.json')
 IMAGE_REQUEST_URL = 'https://en.wikipedia.org/w/api.php?action=query&titles={}&prop=pageimages&format=json&pithumbsize=700'
 
 # Manually annotated town locations and their wiki pages
@@ -51,7 +46,12 @@ MISSING_FROM_TOWN_LIST = {
     'Merrion': 'Merrion,_Dublin', 'Milltown': 'Milltown,_Dublin', 'Monkstown': 'Monkstown,_County_Dublin',
     'Rush': 'Rush,_Dublin', 'Kill': 'Kill,_County_Kildare', 'Newbridge': 'Newbridge,_County_Kildare',
     'Rathangan': 'Rathangan,_County_Kildare', 'Glin': 'Glin,_County_Limerick', 'Raheen': 'Raheen,_County_Limerick',
-    'Birr': 'Birr,_County_Offaly', 'Fethard': 'Fethard,_County_Tipperary', 'Rosslare': 'Rosslare_Strand'
+    'Birr': 'Birr,_County_Offaly', 'Fethard': 'Fethard,_County_Tipperary', 'Rosslare': 'Rosslare_Strand',
+    'Cork City': 'Cork_(city)', 'Galway City': 'Galway', 'Kilkenny City': 'Kilkenny', 'Limerick City': 'Limerick',
+    'Waterford City': 'Waterford', 'Carlow Town': 'Carlow', 'Cavan Town': 'Cavan', 'Donegal Town': 'Donegal_(town)',
+    'Kildare Town': 'Kildare', 'Longford Town': 'Longford', 'Louth Town': 'Louth,_County_Louth',
+    'Monaghan Town': 'Monaghan', 'Roscommon Town': 'Roscommon', 'Sligo Town': 'Sligo',
+    'Tipperary Town': 'Tipperary_(town)', 'Wicklow Town': 'Wicklow'
 }
 
 # Towns with no wiki page or alternative
@@ -170,7 +170,7 @@ def get_location_summary_and_thumbnail(name, page, replacement_images):
         urllib.request.urlretrieve(img_source, os.path.join(
             'clean_data', 'location_images', img_name))
     except Exception as e:
-        logging.error(f'Unable to get location image for {name}. \n{e}')
+        print(f'Unable to get location image for {name}. \n{e}')
         img_name = None
 
     return name, summary, img_name
@@ -203,7 +203,7 @@ def get_location_pages(list_page, locations_data, not_in_list={}, no_location_pa
             county = location_data['location']['county']
             location_pages[location_name] = wiki.page(f'County_{county}')
         else:
-            logging.error(f'Unable to handel getting page for {location_name}')
+            print(f'Unable to handel getting page for {location_name}')
 
     return location_pages
 
@@ -223,7 +223,7 @@ def get_locations_content(location_pages, replacement_images):
                 locations_content[name] = {
                     'summary': summary, 'image': img_name}
             except Exception as e:
-                logging.error(f'Unable to get contnet \n{e}')
+                print(f'Unable to get contnet \n{e}')
 
     return locations_content
 
@@ -248,13 +248,13 @@ def get_postcode_content(postcodes, postcode_image):
             postcode_content[postcode] = {
                 'summary': line, 'image': postcode_image}
         else:
-            logging.error(f'No postcode with name {postcode} found.')
+            print(f'No postcode with name {postcode} found.')
 
     return postcode_content
 
 
 if __name__ == "__main__":
-    logging.info('--- Starting ---')
+    print('--- Starting ---')
 
     # Load cleaned rent data JSON
     rent_data = None
@@ -274,17 +274,17 @@ if __name__ == "__main__":
         towns_list_page, rent_data['Town'], MISSING_FROM_TOWN_LIST, NO_TOWN_WIKI)
 
     # Get Wiki Content
-    logging.info('Getting Wiki content ...')
+    print('Getting Wiki content ...')
     start_time = time.time()
 
-    logging.info('(getting Counties content - asynchronously)')
+    print('(getting Counties content - asynchronously)')
     counties_content = get_locations_content(
         counties_pages, COUNTY_IMG_REPLACEMENTS)
 
-    logging.info('(getting Town content - asynchronously)')
+    print('(getting Town content - asynchronously)')
     towns_content = get_locations_content(town_pages, TOWN_IMG_REPLACEMENTS)
 
-    logging.info('(getting postcode content)')
+    print('(getting postcode content)')
     postcodes = rent_data['PostCode'].keys()
     dublin_img = counties_content['Dublin']['image']
     postcode_content = get_postcode_content(postcodes, dublin_img)
@@ -294,19 +294,19 @@ if __name__ == "__main__":
         'PostCode': postcode_content,
         'Town': towns_content
     }
-    logging.info(f'--- Finished in {time.time() - start_time :.2f}sec ---')
+    print(f'--- Finished in {time.time() - start_time :.2f}sec ---')
     number_of_locations = len(counties_content) + \
         len(towns_content) + len(postcode_content)
-    logging.info(f'(Retrieved content for {number_of_locations} locations)')
+    print(f'(Retrieved content for {number_of_locations} locations)')
 
     # Write data to JSON
     output_filepath = os.path.join(
         'clean_data', f"wiki_data_{time.strftime('%Y-%m-%d-%H-%M-%S')}.json")
-    logging.info('Writing wiki data as JSON ...')
+    print('Writing wiki data as JSON ...')
     with open(output_filepath, 'w') as fp:
         json.dump(wiki_data, fp)
 
-    logging.info(
+    print(
         f'--- Wiki data written to {os.path.abspath(output_filepath)} ---')
 
-    logging.info('--- Finished ---')
+    print('--- Finished ---')

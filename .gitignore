@@ -8,3 +8,6 @@ next.config.js
 node_modules/
 # Logs
 npm-debug.log*
+
+# Cleaned data outputs
+ProcessData/clean_data/*
