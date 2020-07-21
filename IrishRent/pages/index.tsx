@@ -1,12 +1,24 @@
 import Head from "next/head";
 import { GetStaticProps } from "next";
+import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import Alert from "@material-ui/lab/Alert";
+import Link from "@material-ui/core/Link";
 import RentData from "../lib/RentData/RentData";
 import Layout from "../components/Layout/Layout";
 import Hero from "../components/Hero";
 import About from "../components/About";
 
+const useStyles = makeStyles((theme) => ({
+	message: {
+		marginTop: theme.spacing(3),
+		margin: "auto",
+		[theme.breakpoints.up("sm")]: { width: "60%" },
+	},
+}));
+
 export default function Home({ locations, countyPrices }) {
+	const classes = useStyles();
 	const pageTitle = "Irishrent.ie | View Irish Rent Prices";
 	const pageDescription =
 		"View rent prices for towns across Ireland. " +
@@ -21,6 +33,21 @@ export default function Home({ locations, countyPrices }) {
 
 			<Layout locations={locations}>
 				<Container>
+
+					<Alert
+						className={classes.message}
+						severity="success"
+						variant="outlined"
+					>
+						<strong>Irishrent.ie</strong> has been updated with{" "}
+						<strong>2020 Q1</strong> rent prices. View RTB Rent
+						Index Report{" "}
+						<Link href="https://www.rtb.ie/images/uploads/Comms%20and%20Research/RTB_Rent_Index_2020_Q1_%28WEB%29_Final.pdf">
+							here
+						</Link>
+						.
+					</Alert>
+
 					<Hero countyPrices={countyPrices} />
 					<About />
 				</Container>
