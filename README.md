@@ -2,7 +2,7 @@
 
 [Irishrent.ie](https://irishrent.ie/) allows users to view information on rent prices for of towns and counties across Ireland.
 
-![Screenshot]()
+![Irishrent.ie Screenshot](https://raw.githubusercontent.com/SeanFitz1997/IrishRent/master/IrishRent/public/images/demo/full_demo.png)
 
 * Are you searching where you should rent in Ireland?
 * Want to know if you are paying above average rent price?
