@@ -1,24 +1,15 @@
 # IrishRent
 
-This is the code for irishrent.ie
+[Irishrent.ie](https://irishrent.ie/) allows users to view information on rent prices for of towns and counties across Ireland.
 
-Data accessed from here:
-https://statbank.cso.ie/px/pxeirestat/Database/eirestat/Residential%20Tenancies%20Board%20(RTB)/Residential%20Tenancies%20Board%20(RTB)_statbank.asp?SP=Residential%20Tenancies%20Board%20(RTB)&Planguage=0&ProductID=DB_RI
+![Screenshot]()
 
-Query data here:
-https://statbank.cso.ie/px/pxeirestat/Statire/SelectVarVal/Define.asp?maintable=RIA02&PLanguage=0
+* Are you searching where you should rent in Ireland?
+* Want to know if you are paying above average rent price?
+* Want to know what is the right price to charge for your rental property?
 
-## Features to Add
-* Add message to say data was updated
-* Add test & refactor
-* link wiki page and reference image authors
-* add example search in the search bar if it has not been used for a set time
-* add compare location option on the rent price details
-* add share of specific graph function
-* Get more open stats for location details.
-* More options for price changes chart (year range and point per year).
-* Add similar locations links in bottom of rent details page
-* Add a contact email and who made this site
-* Add custom 404
-* Handel the search of unknown  locations
-* Update material UI component 'Material-UI: the ExpansionPanel component was   renamed to Accordion to use a more common naming convention.'
+Simply search for your location in the search bar or explore all of our [locations](https://irishrent.ie/location).
+
+The information provided by this site uses the Average Monthly Rent Report published by the [Residential Tenancies Board (RTB)](https://www.rtb.ie/).
+
+If you have any questions or feedback, please contact us at contact@Irishrent.ie or submit it in the input at the bottom of the page.
