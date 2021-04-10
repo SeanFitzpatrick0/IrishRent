@@ -26,7 +26,7 @@ export default class RentData {
 	private rentDataFilePath = path.join(
 		process.cwd(),
 		"data",
-		"rent_data_2020-07-20-18-56-48.json"
+		"rent_data_2021-04-10-13-07-59.json"
 	);
 
 	private counties: LocationTypeData;
@@ -34,7 +34,7 @@ export default class RentData {
 	private towns: LocationTypeData;
 
 	private currentYear = 2020; // TODO include in data export
-	private currentQuarter = 1; // TODO include in data export
+	private currentQuarter = 4; // TODO include in data export
 
 	private constructor() {
 		let rawRentData = fs.readFileSync(this.rentDataFilePath);

@@ -311,6 +311,9 @@ function PricesOverTimeLineChart({
 				if (v) data.push({ x: date, y: v }); // Add non null data
 		});
 
+		// Sort data by date
+		data.sort((first, second) => first.x - second.x)
+
 		return { label, data, borderColor, backgroundColor, fill: "none" };
 	});
 
@@ -321,6 +324,7 @@ function PricesOverTimeLineChart({
 	const options = {
 		scales: { xAxes: [{ type: "time", time: { unit: "year" } }] },
 	};
+
 
 	return (
 		<div>
