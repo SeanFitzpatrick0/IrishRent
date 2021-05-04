@@ -38,7 +38,7 @@ export default function About() {
 
 					<Typography component="p" variant="subtitle1" gutterBottom>
 						Irishrent.ie allows users to view information on rent
-						prices for of towns and counties across Ireland.
+						prices for towns and counties across Ireland.
 					</Typography>
 
 					<List>
