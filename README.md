@@ -1,6 +1,6 @@
 # IrishRent
 
-[Irishrent.ie](https://irishrent.ie/) allows users to view information on rent prices for of towns and counties across Ireland.
+[Irishrent.ie](https://irishrent.ie/) allows users to view information on rent prices of towns and counties across Ireland.
 
 ![Irishrent.ie Screenshot](https://raw.githubusercontent.com/SeanFitz1997/IrishRent/master/IrishRent/public/images/demo/full_demo.png)
 
