@@ -29,7 +29,7 @@ export default function LocationPage({
 	locations,
 	detailsOptions,
 	currentPeriod,
-}) {
+}: ) {
 	// Styles
 	const classes = useStyles();
 
@@ -58,12 +58,25 @@ export default function LocationPage({
 		comparisons,
 		currentPeriod
 	);
+	const pageImage = locationData.details.image
 
 	return (
 		<>
 			<Head>
 				<title>{pageTitle}</title>
 				<meta name="description" content={pageDescription} />
+
+				<meta property="og:title" content={pageTitle} key="ogtitle" />
+				<meta
+					property="og:description"
+					content={pageDescription}
+					key="ogdesc"
+				/>
+				<meta
+					property="og:image"
+					content={`/images/location_images/${pageImage}`}
+					key="ogimage"
+				/>
 			</Head>
 
 			<Layout locations={locations}>
@@ -122,7 +135,13 @@ function getPageDescription(
 	const locationName = getLocationName(locationData.location);
 	// TODO make year and date dynamic
 	const { year, quarter } = currentPeriod;
-	const averagePrice = getAveragePrice(locationData, "Any", "Any", year, quarter);
+	const averagePrice = getAveragePrice(
+		locationData,
+		"Any",
+		"Any",
+		year,
+		quarter
+	);
 	const rentChange = getRentChange(
 		locationData.priceData["Any_Any"],
 		year,

@@ -14,6 +14,18 @@ export default function ({ locations }) {
 			<Head>
 				<title>{pageTitle}</title>
 				<meta name="description" content={pageDescription} />
+
+				<meta property="og:title" content={pageTitle} key="ogtitle" />
+				<meta
+					property="og:description"
+					content={pageDescription}
+					key="ogdesc"
+				/>
+				<meta
+					property="og:image"
+					content="/images/demo/full_demo.png"
+					key="ogimage"
+				/>
 			</Head>
 			<Layout locations={locations}>
 				<AllLocations locations={locations} />
