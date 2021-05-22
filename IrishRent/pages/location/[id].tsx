@@ -29,7 +29,7 @@ export default function LocationPage({
 	locations,
 	detailsOptions,
 	currentPeriod,
-}: ) {
+}) {
 	// Styles
 	const classes = useStyles();
 
@@ -58,7 +58,7 @@ export default function LocationPage({
 		comparisons,
 		currentPeriod
 	);
-	const pageImage = locationData.details.image
+	const pageImage = locationData.details.image;
 
 	return (
 		<>
