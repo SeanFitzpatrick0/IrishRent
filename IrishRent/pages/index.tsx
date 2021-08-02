@@ -51,7 +51,7 @@ export default function Home({ locations, countyPrices }) {
 						variant="outlined"
 					>
 						<strong>Irishrent.ie</strong> has been updated with{" "}
-						<strong>2020 Q4</strong> rent prices. View RTB Rent
+						<strong>2021 Q1</strong> rent prices. View RTB Rent
 						Index Report{" "}
 						<Link href="https://www.rtb.ie/research/ar">here</Link>.
 					</Alert>

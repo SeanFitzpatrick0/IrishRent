@@ -4,6 +4,7 @@
 .env
 .env.build
 next.config.js
+.vscode
 # Dependency directories
 node_modules/
 # Logs

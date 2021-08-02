@@ -11,7 +11,7 @@ from utils import replace_item_in_dict, get_location_name
 
 NAN_REPLACE = 'Missing'
 RAW_DATA_PATH = os.path.join(
-    'raw_data', 'Quarter_Location_PropertyType_NumbBed(2007Q4-2020Q4)2021_14_10.csv')
+    'raw_data', 'Quarter_Location_PropertyType_NumbBed(2007Q4-2021Q1)2021_08_02.csv')
 WIKI_CONTENT_PATH = os.path.join(
     'clean_data', 'wiki_data_2020-07-20-18-46-09.json')
 
