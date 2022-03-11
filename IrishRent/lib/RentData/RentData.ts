@@ -1,14 +1,15 @@
-import fs from "fs";
-import path from "path";
 import {
-	RentDataContent,
-	LocationTypeData,
-	LocationData,
 	AllLocationsRecord,
 	Location,
+	LocationData,
+	LocationTypeData,
 	QuarterPeriod,
+	RentDataContent,
 } from "./RentData_interfaces";
 import { getLocationName, selectNRandom } from "../Utils";
+
+import fs from "fs";
+import path from "path";
 
 const NUMB_COMPARISONS = 4;
 
@@ -26,7 +27,7 @@ export default class RentData {
 	private rentDataFilePath = path.join(
 		process.cwd(),
 		"data",
-		"rent_data_2021-08-02-10-25-50.json"
+		"rent_data_2022-03-11-10-56-08.json"
 	);
 
 	private counties: LocationTypeData;
@@ -34,7 +35,7 @@ export default class RentData {
 	private towns: LocationTypeData;
 
 	private currentYear = 2021; // TODO include in data export
-	private currentQuarter = 1; // TODO include in data export
+	private currentQuarter = 3; // TODO include in data export
 
 	private constructor() {
 		let rawRentData = fs.readFileSync(this.rentDataFilePath);
@@ -91,10 +92,9 @@ export default class RentData {
 				countyPrices[recordType] = {
 					propertyType: priceRecord.propertyType,
 					beds: priceRecord.beds,
-					price:
-						priceRecord.prices[
-							`${this.currentYear}Q${this.currentQuarter}`
-						],
+					price: priceRecord.prices[
+						`${this.currentYear}Q${this.currentQuarter}`
+					],
 				};
 			}
 
@@ -129,9 +129,7 @@ export default class RentData {
 
 	// TODO make variables for number of comparisons
 	// TODO fix bug if there isnt enough comparisons in a county (e.g. county in carlow)
-	public getComparisonLocations(
-		referenceLocation: Location
-	): {
+	public getComparisonLocations(referenceLocation: Location): {
 		parent?: LocationData;
 		neighbors: LocationData[];
 	} {

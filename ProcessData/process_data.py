@@ -11,7 +11,7 @@ from utils import replace_item_in_dict, get_location_name
 
 NAN_REPLACE = 'Missing'
 RAW_DATA_PATH = os.path.join(
-    'raw_data', 'Quarter_Location_PropertyType_NumbBed(2007Q4-2021Q1)2021_08_02.csv')
+    'raw_data', 'Quarter_Location_PropertyType_NumbBed(2007Q4-2021Q3)2022_03_11.px')
 WIKI_CONTENT_PATH = os.path.join(
     'clean_data', 'wiki_data_2020-07-20-18-46-09.json')
 
@@ -123,7 +123,7 @@ def clean_data(df):
     df['Year'], df['Quarter'] = temp.str[0], temp.str[1]
 
     # Fix Price
-    df['Price'] = pd.to_numeric(df['VALUE'])
+    df['Price'] = pd.to_numeric(df['Price'])
 
     # Unable to groupby NaN values, need to fill Nan https://github.com/pandas-dev/pandas/issues/10468
     df = df.fillna(NAN_REPLACE)
@@ -177,7 +177,7 @@ if __name__ == "__main__":
     logging.info('--- Starting ---')
 
     # Load data
-    df = pd.read_csv(RAW_DATA_PATH)
+    df = pyaxis.parse(RAW_DATA_PATH, encoding='ISO-8859-2')['DATA']
 
     # Clean data
     logging.info('Processing rent data ...')

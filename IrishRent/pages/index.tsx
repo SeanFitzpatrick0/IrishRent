@@ -1,13 +1,13 @@
-import Head from "next/head";
-import { GetStaticProps } from "next";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
+import About from "../components/About";
 import Alert from "@material-ui/lab/Alert";
+import Container from "@material-ui/core/Container";
+import { GetStaticProps } from "next";
+import Head from "next/head";
+import Hero from "../components/Hero";
+import Layout from "../components/Layout/Layout";
 import Link from "@material-ui/core/Link";
 import RentData from "../lib/RentData/RentData";
-import Layout from "../components/Layout/Layout";
-import Hero from "../components/Hero";
-import About from "../components/About";
+import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
 	message: {
@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function Home({ locations, countyPrices }) {
+export default function Home({ locations, countyPrices, currentPeriod }) {
 	const classes = useStyles();
 	const pageTitle = "Irishrent.ie | View Irish Rent Prices";
 	const pageDescription =
@@ -51,8 +51,10 @@ export default function Home({ locations, countyPrices }) {
 						variant="outlined"
 					>
 						<strong>Irishrent.ie</strong> has been updated with{" "}
-						<strong>2021 Q1</strong> rent prices. View RTB Rent
-						Index Report{" "}
+						<strong>
+							{currentPeriod.year} Q{currentPeriod.quarter}
+						</strong>{" "}
+						rent prices. View RTB Rent Index Report{" "}
 						<Link href="https://www.rtb.ie/research/ar">here</Link>.
 					</Alert>
 
@@ -68,6 +70,7 @@ export const getStaticProps: GetStaticProps = async () => {
 	const rentData = RentData.getInstance();
 	const locations = rentData.getLocations();
 	const countyPrices = rentData.getCurrentCountiesPrices();
+	const currentPeriod = rentData.getCurrentPeriod();
 
-	return { props: { locations, countyPrices } };
+	return { props: { locations, countyPrices, currentPeriod } };
 };
