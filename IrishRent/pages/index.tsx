@@ -1,3 +1,9 @@
+import {
+	AllLocationsRecord,
+	CurrentCountyPrices,
+	QuarterPeriod,
+} from "../lib/RentData/RentData_interfaces";
+
 import About from "../components/About";
 import Alert from "@material-ui/lab/Alert";
 import Container from "@material-ui/core/Container";
@@ -9,6 +15,12 @@ import Link from "@material-ui/core/Link";
 import RentData from "../lib/RentData/RentData";
 import { makeStyles } from "@material-ui/core/styles";
 
+const PAGE_TITLE = "Irishrent.ie | View Rent Prices in Ireland";
+const PAGE_DESCRIPTION =
+	"View rent prices for towns across Ireland. " +
+	"Looking to rent a house or apartment in Dublin, Galway, Cork, Wexford or Limerick? " +
+	"irishrent.ie will show you rent prices for these areas and more.";
+
 const useStyles = makeStyles((theme) => ({
 	message: {
 		marginTop: theme.spacing(3),
@@ -17,56 +29,73 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function Home({ locations, countyPrices, currentPeriod }) {
+const HomeHead: React.FC = () => (
+	<Head>
+		<title>{PAGE_TITLE}</title>
+		<meta name="description" content={PAGE_DESCRIPTION} />
+
+		<meta property="og:title" content={PAGE_TITLE} key="ogtitle" />
+		<meta
+			property="og:description"
+			content={PAGE_DESCRIPTION}
+			key="ogdesc"
+		/>
+		<meta
+			property="og:image"
+			content="/images/demo/full_demo.png"
+			key="ogimage"
+		/>
+		{/* TODO Pass from rent data */}
+		{/* <meta itemProp="datePublished" content="2016-01-07"></meta> */}
+	</Head>
+);
+
+const LastUpdateAlert: React.FC<Pick<HomeProps, "currentPeriod">> = ({
+	currentPeriod: { year, quarter },
+}) => {
 	const classes = useStyles();
-	const pageTitle = "Irishrent.ie | View Irish Rent Prices";
-	const pageDescription =
-		"View rent prices for towns across Ireland. " +
-		"Looking to rent a house or apartment in Dublin, Galway, Cork, Wexford or Limerick? " +
-		"irishrent.ie will show you rent prices for these areas and more.";
+	return (
+		<Alert
+			className={classes.message}
+			severity="success"
+			variant="outlined"
+		>
+			<strong>Irishrent.ie</strong> has been updated with{" "}
+			<strong>
+				{year} Q{quarter}
+			</strong>{" "}
+			rent prices. View RTB Rent Index Report{" "}
+			<Link href="https://www.rtb.ie/research/ar">here</Link>.
+		</Alert>
+	);
+};
+
+interface HomeProps {
+	locations: AllLocationsRecord;
+	countyPrices: CurrentCountyPrices;
+	currentPeriod: QuarterPeriod;
+}
+
+const Home: React.FC<HomeProps> = ({
+	locations,
+	countyPrices,
+	currentPeriod,
+}) => {
 	return (
 		<>
-			<Head>
-				<title>{pageTitle}</title>
-				<meta name="description" content={pageDescription} />
-
-				<meta property="og:title" content={pageTitle} key="ogtitle" />
-				<meta
-					property="og:description"
-					content={pageDescription}
-					key="ogdesc"
-				/>
-				<meta
-					property="og:image"
-					content="/images/demo/full_demo.png"
-					key="ogimage"
-				/>
-			</Head>
-
+			<HomeHead />
 			<Layout locations={locations}>
 				<Container>
-					<Alert
-						className={classes.message}
-						severity="success"
-						variant="outlined"
-					>
-						<strong>Irishrent.ie</strong> has been updated with{" "}
-						<strong>
-							{currentPeriod.year} Q{currentPeriod.quarter}
-						</strong>{" "}
-						rent prices. View RTB Rent Index Report{" "}
-						<Link href="https://www.rtb.ie/research/ar">here</Link>.
-					</Alert>
-
+					<LastUpdateAlert currentPeriod={currentPeriod} />
 					<Hero countyPrices={countyPrices} />
 					<About />
 				</Container>
 			</Layout>
 		</>
 	);
-}
+};
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps: GetStaticProps<HomeProps> = async () => {
 	const rentData = RentData.getInstance();
 	const locations = rentData.getLocations();
 	const countyPrices = rentData.getCurrentCountiesPrices();
@@ -74,3 +103,5 @@ export const getStaticProps: GetStaticProps = async () => {
 
 	return { props: { locations, countyPrices, currentPeriod } };
 };
+
+export default Home;

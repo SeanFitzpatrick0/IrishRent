@@ -4,6 +4,16 @@ export interface RentDataContent {
 	Town: LocationTypeData;
 }
 
+export interface CurrentCountyPrices {
+	[key: string]: {
+		[key: string]: {
+			propertyType: string;
+			beds: string;
+			price: number;
+		};
+	};
+}
+
 export interface LocationTypeData {
 	[key: string]: LocationData;
 }
@@ -20,6 +30,11 @@ export interface AllLocationsRecord {
 	counties: Location[];
 	postcodes: Location[];
 	towns: Location[];
+}
+
+export interface LocationComparisons {
+	parent?: LocationData;
+	neighbors: LocationData[];
 }
 
 export interface Location {

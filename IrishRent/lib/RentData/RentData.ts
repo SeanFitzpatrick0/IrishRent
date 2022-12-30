@@ -1,6 +1,8 @@
 import {
 	AllLocationsRecord,
+	CurrentCountyPrices,
 	Location,
+	LocationComparisons,
 	LocationData,
 	LocationTypeData,
 	QuarterPeriod,
@@ -74,15 +76,7 @@ export default class RentData {
 		return { counties, postcodes, towns };
 	}
 
-	public getCurrentCountiesPrices(): {
-		[key: string]: {
-			[key: string]: {
-				propertyType: string;
-				beds: string;
-				price: number;
-			};
-		};
-	} {
+	public getCurrentCountiesPrices(): CurrentCountyPrices {
 		let countiesPrices = {};
 		for (let [countyName, county] of Object.entries(this.counties)) {
 			let countyPrices = {};
@@ -129,10 +123,9 @@ export default class RentData {
 
 	// TODO make variables for number of comparisons
 	// TODO fix bug if there isnt enough comparisons in a county (e.g. county in carlow)
-	public getComparisonLocations(referenceLocation: Location): {
-		parent?: LocationData;
-		neighbors: LocationData[];
-	} {
+	public getComparisonLocations(
+		referenceLocation: Location
+	): LocationComparisons {
 		if (
 			referenceLocation.locationType === "Town" ||
 			referenceLocation.locationType === "PostCode"

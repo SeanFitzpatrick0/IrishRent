@@ -1,35 +1,79 @@
-import Head from "next/head";
-import { GetStaticProps, GetStaticPaths } from "next";
-import React, { useRef, useEffect, useState } from "react";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import Layout from "../../components/Layout/Layout";
-import LocationDetails from "../../components/LocationDetails";
-import RentDetails from "../../components/RentDetails";
-import RentData from "../../lib/RentData/RentData";
 import {
+	AllLocationsRecord,
+	LocationComparisons,
 	LocationData,
 	QuarterPeriod,
 } from "../../lib/RentData/RentData_interfaces";
+import { GetStaticPaths, GetStaticProps } from "next";
+import React, { useEffect, useRef, useState } from "react";
 import {
-	getLocationName,
 	getAveragePrice,
+	getLocationName,
 	getRentChange,
 } from "../../lib/Utils";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+
+import Head from "next/head";
+import Layout from "../../components/Layout/Layout";
+import LocationDetails from "../../components/LocationDetails";
+import RentData from "../../lib/RentData/RentData";
+import RentDetails from "../../components/RentDetails";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 // Styles definition
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((_theme) => ({
 	container: { margin: "auto", width: "100%" },
 	withSidebar: { display: "inherit" },
 }));
 
-export default function LocationPage({
+const LocationPageHead: React.FC<
+	Pick<LocationPageProps, "locationData" | "comparisons" | "currentPeriod">
+> = ({ locationData, comparisons, currentPeriod }) => {
+	const pageTitle = getPageTitle(locationData, currentPeriod);
+	const pageDescription = getPageDescription(
+		locationData,
+		comparisons,
+		currentPeriod
+	);
+	const pageImage = locationData.details.image;
+	return (
+		<Head>
+			<title>{pageTitle}</title>
+			<meta name="description" content={pageDescription} />
+
+			<meta property="og:title" content={pageTitle} key="ogtitle" />
+			<meta
+				property="og:description"
+				content={pageDescription}
+				key="ogdesc"
+			/>
+			<meta
+				property="og:image"
+				content={`/images/location_images/${pageImage}`}
+				key="ogimage"
+			/>
+		</Head>
+	);
+};
+
+interface LocationPageProps {
+	locationData: LocationData;
+	comparisons: LocationComparisons;
+	locations: AllLocationsRecord;
+	detailsOptions: {
+		propertyTypes: string[];
+		bedTypes: string[];
+	};
+	currentPeriod: QuarterPeriod;
+}
+
+const LocationPage: React.FC<LocationPageProps> = ({
 	locationData,
 	comparisons,
 	locations,
 	detailsOptions,
 	currentPeriod,
-}) {
+}) => {
 	// Styles
 	const classes = useStyles();
 
@@ -52,33 +96,13 @@ export default function LocationPage({
 		window.addEventListener("resize", setContainerHeight);
 	}, []);
 
-	const pageTitle = getPageTitle(locationData, currentPeriod);
-	const pageDescription = getPageDescription(
-		locationData,
-		comparisons,
-		currentPeriod
-	);
-	const pageImage = locationData.details.image;
-
 	return (
 		<>
-			<Head>
-				<title>{pageTitle}</title>
-				<meta name="description" content={pageDescription} />
-
-				<meta property="og:title" content={pageTitle} key="ogtitle" />
-				<meta
-					property="og:description"
-					content={pageDescription}
-					key="ogdesc"
-				/>
-				<meta
-					property="og:image"
-					content={`/images/location_images/${pageImage}`}
-					key="ogimage"
-				/>
-			</Head>
-
+			<LocationPageHead
+				locationData={locationData}
+				comparisons={comparisons}
+				currentPeriod={currentPeriod}
+			/>
 			<Layout locations={locations}>
 				<div
 					ref={container}
@@ -105,7 +129,7 @@ export default function LocationPage({
 			</Layout>
 		</>
 	);
-}
+};
 
 function getPageTitle(
 	locationData: LocationData,
@@ -202,3 +226,5 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 		},
 	};
 };
+
+export default LocationPage;
