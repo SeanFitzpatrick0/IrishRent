@@ -19,7 +19,7 @@
     "autosuggest-highlight": "^3.1.1",
     "chart.js": "^2.9.4",
     "lodash": "^4.17.19",
-    "next": "^9.4.4",
+    "next": "^13.1.1",
     "nodemailer": "^6.4.16",
     "react": "^16.13.1",
     "react-chartjs-2": "^2.9.0",
