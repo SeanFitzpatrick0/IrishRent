@@ -22,8 +22,6 @@ export enum BedType {
 	FOUR_PLUS = "4+",
 }
 
-export type PropertyBedCombination = `${PropertyType}_${BedType}`;
-
 export type RentDataContent = Record<LocationType, LocationTypeData>;
 
 export interface CurrentCountyPrices {
@@ -52,7 +50,7 @@ export interface LocationTypeData {
 
 export interface LocationData {
 	location: Location;
-	priceData: Record<PropertyBedCombination, PriceRecord>;
+	priceData: Record<string, PriceRecord>;
 	details: LocationWikiContent;
 }
 
