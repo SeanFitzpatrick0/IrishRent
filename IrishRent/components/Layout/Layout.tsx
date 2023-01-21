@@ -1,9 +1,10 @@
-import { useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Header from "./Header";
-import Footer from "./Footer";
-import { AllLocationsRecord } from "../../lib/RentData/RentData_interfaces";
 import { initGA, logPageView } from "../../lib/Analytics";
+
+import { AllLocationsRecord } from "../../lib/RentData/types";
+import Footer from "./Footer";
+import Header from "./Header";
+import { makeStyles } from "@material-ui/core/styles";
+import { useEffect } from "react";
 
 const useStyles = makeStyles((theme) => ({
 	page: {

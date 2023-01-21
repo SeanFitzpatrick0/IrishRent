@@ -3,7 +3,7 @@ import {
 	LocationComparisons,
 	LocationData,
 	QuarterPeriod,
-} from "../../lib/RentData/RentData_interfaces";
+} from "../../lib/RentData/types";
 import { GetStaticPaths, GetStaticProps } from "next";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -209,7 +209,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 	const locationName = params.id.toString();
 	const locationData = rentData.getLocationData(locationName);
 	const comparisons = rentData.getComparisonLocations(locationData.location);
-	const locations = rentData.getLocations();
+	const locations = rentData.getAllLocationDetails();
 	const detailsOptions = {
 		propertyTypes: RentData.PROPERTY_TYPES,
 		bedTypes: RentData.BED_TYPES,

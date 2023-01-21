@@ -1,5 +1,9 @@
-import AllLocations from "../../components/AllLocations";
-import { AllLocationsRecord } from "../../lib/RentData/RentData_interfaces";
+import {
+	AllLocationsCurrentAveragePrice,
+	AllLocationsRecord,
+} from "../../lib/RentData/types";
+
+import { AllLocations } from "../../components/AllLocations";
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import Layout from "../../components/Layout/Layout";
@@ -30,14 +34,21 @@ const AllLocationsHead: React.FC = () => (
 
 interface AllLocationsPageProps {
 	locations: AllLocationsRecord;
+	currentPrices: AllLocationsCurrentAveragePrice;
 }
 
-const AllLocationsPage: React.FC<AllLocationsPageProps> = ({ locations }) => {
+const AllLocationsPage: React.FC<AllLocationsPageProps> = ({
+	locations,
+	currentPrices,
+}) => {
 	return (
 		<>
 			<AllLocationsHead />
 			<Layout locations={locations}>
-				<AllLocations locations={locations} />
+				<AllLocations
+					locations={locations}
+					currentPrices={currentPrices}
+				/>
 			</Layout>
 		</>
 	);
@@ -47,8 +58,9 @@ export const getStaticProps: GetStaticProps<
 	AllLocationsPageProps
 > = async () => {
 	const rentData = RentData.getInstance();
-	const locations = rentData.getLocations();
-	return { props: { locations } };
+	const locations = rentData.getAllLocationDetails();
+	const currentPrices = rentData.getAllLocationsWithCurrentAveragePrice();
+	return { props: { locations, currentPrices } };
 };
 
 export default AllLocationsPage;

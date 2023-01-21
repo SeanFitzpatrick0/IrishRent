@@ -1,15 +1,22 @@
-import Link from "next/link";
-import _ from "lodash";
-import { makeStyles } from "@material-ui/core/styles";
+import {
+	AllLocationsCurrentAveragePrice,
+	AllLocationsRecord,
+	Location,
+	LocationCurrentAveragePrice,
+	LocationType,
+} from "../lib/RentData/types";
+
+import Chip from "@material-ui/core/Chip";
 import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import Chip from "@material-ui/core/Chip";
-import { Location } from "../lib/RentData/RentData_interfaces";
+import Link from "next/link";
+import Typography from "@material-ui/core/Typography";
+import _ from "lodash";
 import { getLocationName } from "../lib/Utils";
+import { makeStyles } from "@material-ui/core/styles";
 
 // Style Definitions
 const useStyles = makeStyles((theme) => ({
@@ -33,111 +40,161 @@ const useStyles = makeStyles((theme) => ({
 	emphasizedExpand: { marginBottom: theme.spacing(2) },
 }));
 
-export default function AllLocations({ locations }) {
-	// Styles
-	const classes = useStyles();
+export interface AllLocationsProps {
+	locations: AllLocationsRecord;
+	currentPrices: AllLocationsCurrentAveragePrice;
+}
 
-	// State
-	const allCounties = {
-		title: "Counties",
-		subtitle: "view all counties",
-		locations: locations.counties,
-		type: "County",
-	};
-	const allPostCodes = {
-		title: "Post Codes",
-		subtitle: "view all Dublin post codes",
-		locations: locations.postcodes,
-		type: "PostCode",
-	};
-	const groupedCounties = _.groupBy(locations.towns, (town) => town.county);
-	const townsInCounties = Object.entries(groupedCounties).map(
-		([county, towns]: [string, Location[]]) => ({
-			title: county,
-			subtitle: `view all towns in ${county}`,
-			locations: towns,
-			type: "Town",
-		})
+export const AllLocations: React.FC<AllLocationsProps> = ({
+	locations,
+	currentPrices,
+}) => {
+	const classes = useStyles();
+	const groupedTownsInCounties = _.groupBy(
+		currentPrices[LocationType.TOWN],
+		(town) => town.location.county
 	);
-	const sections = [allCounties, allPostCodes, ...townsInCounties];
 
 	return (
 		<Container maxWidth="md" className={classes.wrapper}>
-			<Typography
-				component="h1"
-				variant="h4"
-				align="center"
-				color="textSecondary"
-				gutterBottom
-			>
-				View all locations
-			</Typography>
-
-			<Typography
-				variant="subtitle1"
-				align="center"
-				color="textSecondary"
-			>
-				View all locations in each county or search for a location using
-				search bar.
-			</Typography>
-
+			<AllLocationsTitle />
 			<div className={classes.panels}>
-				{sections.map((section, i) => {
-					const panelId = "panel" + i;
-					const emphasized =
-						section.type === "County" ||
-						section.type === "PostCode";
-					return (
-						<ExpansionPanel
-							className={
-								emphasized ? classes.emphasizedExpand : ""
-							}
-							key={panelId}
-						>
-							<ExpansionPanelSummary
-								expandIcon={<ExpandMoreIcon />}
-								aria-controls={`${panelId}-content`}
-								id={`${panelId}-header`}
-							>
-								<Typography className={classes.heading}>
-									{emphasized ? (
-										<b>{section.title}</b>
-									) : (
-										section.title
-									)}
-								</Typography>
-								<Typography
-									className={classes.secondaryHeading}
-								>
-									{section.subtitle}
-								</Typography>
-							</ExpansionPanelSummary>
-							<ExpansionPanelDetails>
-								<div className={classes.locationLinks}>
-									{section.locations.map((location, i) => (
-										<Link
-											key={i}
-											href={`/location/${getLocationName(
-												location
-											)}`}
-										>
-											<Chip
-												key={i}
-												label={getLocationName(
-													location
-												)}
-												component="a"
-												clickable
-											/>
-										</Link>
-									))}
-								</div>
-							</ExpansionPanelDetails>
-						</ExpansionPanel>
-					);
-				})}
+				<AllCountiesSectionExpansion
+					locations={currentPrices[LocationType.COUNTY]}
+				/>
+				<AllPostCodesSectionExpansion
+					locations={currentPrices[LocationType.POST_CODE]}
+				/>
+				{Object.entries(groupedTownsInCounties).map(
+					([county, towns]: [
+						string,
+						LocationCurrentAveragePrice[]
+					]) => (
+						<CountyCodesSectionExpansion
+							title={county}
+							subtitle={`view all towns in ${county}`}
+							locations={towns}
+						/>
+					)
+				)}
 			</div>
 		</Container>
 	);
+};
+
+const AllLocationsTitle: React.FC = () => (
+	<>
+		<Typography
+			component="h1"
+			variant="h4"
+			align="center"
+			color="textSecondary"
+			gutterBottom
+		>
+			View all locations
+		</Typography>
+
+		<Typography variant="subtitle1" align="center" color="textSecondary">
+			View all locations in each county or search for a location using
+			search bar.
+		</Typography>
+	</>
+);
+
+const AllCountiesSectionExpansion: React.FC<
+	Pick<LocationsSectionExpansionProps, "locations">
+> = ({ locations }) => (
+	<LocationsSectionExpansion
+		title="Counties"
+		subtitle="view all counties"
+		locations={locations}
+		emphasize
+		panelId="AllCounties"
+	/>
+);
+
+const AllPostCodesSectionExpansion: React.FC<
+	Pick<LocationsSectionExpansionProps, "locations">
+> = ({ locations }) => (
+	<LocationsSectionExpansion
+		title="Post Codes"
+		subtitle="view all Dublin post codes"
+		locations={locations}
+		emphasize
+		panelId="AllPostCodes"
+	/>
+);
+
+const CountyCodesSectionExpansion: React.FC<
+	Pick<LocationsSectionExpansionProps, "title" | "subtitle" | "locations">
+> = ({ title, subtitle, locations }) => (
+	<LocationsSectionExpansion
+		title={title}
+		subtitle={subtitle}
+		locations={locations}
+		panelId={title}
+		emphasize={false}
+	/>
+);
+
+interface LocationsSectionExpansionProps {
+	title: string;
+	subtitle: string;
+	locations: LocationCurrentAveragePrice[];
+	emphasize: boolean;
+	panelId: string;
 }
+
+const LocationsSectionExpansion: React.FC<LocationsSectionExpansionProps> = ({
+	title,
+	subtitle,
+	locations,
+	emphasize,
+	panelId,
+}) => {
+	const classes = useStyles();
+	return (
+		<ExpansionPanel className={emphasize ? classes.emphasizedExpand : ""}>
+			<ExpansionPanelSummary
+				expandIcon={<ExpandMoreIcon />}
+				aria-controls={`${panelId}-content`}
+				id={`${panelId}-header`}
+			>
+				<Typography className={classes.heading}>
+					{emphasize ? <b>{title}</b> : title}
+				</Typography>
+				<Typography className={classes.secondaryHeading}>
+					{subtitle}
+				</Typography>
+			</ExpansionPanelSummary>
+			<ExpansionPanelDetails>
+				<div className={classes.locationLinks}>
+					{locations
+						.sort((a, b) =>
+							a.currentPrice < b.currentPrice ? 1 : -1
+						)
+						.map(({ location, currentPrice }, i) => (
+							<Link
+								key={i}
+								href={`/location/${getLocationName(location)}`}
+							>
+								<Chip
+									key={i}
+									label={
+										<>
+											{getLocationName(location)}{" "}
+											{currentPrice && (
+												<> €{currentPrice}</>
+											)}
+										</>
+									}
+									component="a"
+									clickable
+								/>
+							</Link>
+						))}
+				</div>
+			</ExpansionPanelDetails>
+		</ExpansionPanel>
+	);
+};

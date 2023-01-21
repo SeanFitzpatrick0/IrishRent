@@ -2,7 +2,7 @@ import {
 	AllLocationsRecord,
 	CurrentCountyPrices,
 	QuarterPeriod,
-} from "../lib/RentData/RentData_interfaces";
+} from "../lib/RentData/types";
 
 import About from "../components/About";
 import Alert from "@material-ui/lab/Alert";
@@ -97,7 +97,7 @@ const Home: React.FC<HomeProps> = ({
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
 	const rentData = RentData.getInstance();
-	const locations = rentData.getLocations();
+	const locations = rentData.getAllLocationDetails();
 	const countyPrices = rentData.getCurrentCountiesPrices();
 	const currentPeriod = rentData.getCurrentPeriod();
 

@@ -1,13 +1,16 @@
 import {
+	AllLocationsCurrentAveragePrice,
 	AllLocationsRecord,
 	CurrentCountyPrices,
 	Location,
 	LocationComparisons,
+	LocationCurrentAveragePrice,
 	LocationData,
+	LocationType,
 	LocationTypeData,
 	QuarterPeriod,
 	RentDataContent,
-} from "./RentData_interfaces";
+} from "./types";
 import { getLocationName, selectNRandom } from "../Utils";
 
 import fs from "fs";
@@ -15,6 +18,7 @@ import path from "path";
 
 const NUMB_COMPARISONS = 4;
 
+/** Singleton class to load and query rent data */
 export default class RentData {
 	public static PROPERTY_TYPES = [
 		"Any",
@@ -22,8 +26,16 @@ export default class RentData {
 		"Semi Detached",
 		"Terrace",
 		"Flat",
-	];
-	public static BED_TYPES = ["Any", "1", "2", "3", "1-2", "1-3", "4+"];
+	] as const;
+	public static BED_TYPES = [
+		"Any",
+		"1",
+		"2",
+		"3",
+		"1-2",
+		"1-3",
+		"4+",
+	] as const;
 
 	private static instance: RentData;
 	private rentDataFilePath = path.join(
@@ -57,7 +69,12 @@ export default class RentData {
 		return { year: this.currentYear, quarter: this.currentQuarter };
 	}
 
-	public getLocations(): AllLocationsRecord {
+	private getPeriodKey({ year, quarter }: QuarterPeriod): string {
+		return `${year}Q${quarter}`;
+	}
+
+	/** Get all location details without prices */
+	public getAllLocationDetails(): AllLocationsRecord {
 		let counties: Location[] = Object.values(this.counties).map(
 			(county) => county.location
 		);
@@ -74,6 +91,34 @@ export default class RentData {
 		);
 
 		return { counties, postcodes, towns };
+	}
+
+	/** Gets all locations, with their current average price  */
+	public getAllLocationsWithCurrentAveragePrice(): AllLocationsCurrentAveragePrice {
+		return {
+			[LocationType.COUNTY]: this.getLocationTypesCurrentAveragePriceData(
+				this.counties
+			),
+			[LocationType.POST_CODE]:
+				this.getLocationTypesCurrentAveragePriceData(this.postcodes),
+			[LocationType.TOWN]: this.getLocationTypesCurrentAveragePriceData(
+				this.towns
+			),
+		};
+	}
+
+	private getLocationTypesCurrentAveragePriceData(
+		locationTypeData: LocationTypeData
+	): LocationCurrentAveragePrice[] {
+		return Object.values(locationTypeData).map(
+			({ location, priceData }) => ({
+				location,
+				currentPrice:
+					priceData["Any_Any"].prices[
+						this.getPeriodKey(this.getCurrentPeriod())
+					],
+			})
+		);
 	}
 
 	public getCurrentCountiesPrices(): CurrentCountyPrices {
@@ -99,7 +144,7 @@ export default class RentData {
 	}
 
 	public getLocationPaths(): { params: { id: string } }[] {
-		const locations = this.getLocations();
+		const locations = this.getAllLocationDetails();
 		const locationPaths = Object.values(locations).map((locations) => {
 			return locations.map((location) => {
 				let id = getLocationName(location);
@@ -127,12 +172,12 @@ export default class RentData {
 		referenceLocation: Location
 	): LocationComparisons {
 		if (
-			referenceLocation.locationType === "Town" ||
-			referenceLocation.locationType === "PostCode"
+			referenceLocation.locationType === LocationType.TOWN ||
+			referenceLocation.locationType === LocationType.POST_CODE
 		) {
 			let parent = this.counties[referenceLocation.county];
 			let similarLocations = Object.values(
-				referenceLocation.locationType === "Town"
+				referenceLocation.locationType === LocationType.TOWN
 					? this.towns
 					: this.postcodes
 			).filter(
