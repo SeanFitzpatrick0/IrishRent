@@ -35,7 +35,7 @@ export interface CurrentCountyPrices {
 }
 
 export type LocationCurrentAveragePrice = {
-	currentPrice: number;
+	currentPrice?: number;
 } & Pick<LocationData, "location">;
 
 /** All location details, with their current average price */
@@ -76,9 +76,11 @@ export interface Location {
 export interface PriceRecord {
 	propertyType: PropertyType;
 	beds: BedType;
-	prices: {
-		[yearQuarter: string]: number;
-	};
+	prices: QuarterlyPrices;
+}
+
+export interface QuarterlyPrices {
+	[yearQuarter: string]: number;
 }
 
 export interface LocationWikiContent {

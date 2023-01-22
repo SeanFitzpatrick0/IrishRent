@@ -9,6 +9,7 @@ import {
 	LocationType,
 	LocationTypeData,
 	QuarterPeriod,
+	QuarterlyPrices,
 	RentDataContent,
 } from "./types";
 import { getLocationName, selectNRandom } from "../Utils";
@@ -50,6 +51,8 @@ export default class RentData {
 
 	private currentYear = 2022; // TODO include in data export
 	private currentQuarter = 2; // TODO include in data export
+	private startingYear = 2007;
+	private startingQuarter = 4;
 
 	private constructor() {
 		let rawRentData = fs.readFileSync(this.rentDataFilePath);
@@ -113,10 +116,9 @@ export default class RentData {
 		return Object.values(locationTypeData).map(
 			({ location, priceData }) => ({
 				location,
-				currentPrice:
-					priceData["Any_Any"].prices[
-						this.getPeriodKey(this.getCurrentPeriod())
-					],
+				currentPrice: this.getMostRecentPrice(
+					priceData["Any_Any"].prices
+				),
 			})
 		);
 	}
@@ -206,5 +208,40 @@ export default class RentData {
 			let neighbors = selectNRandom(similarLocations, numNeighbors);
 			return { neighbors };
 		}
+	}
+
+	/** Gets a list of all quarter periods in the dataset from start to current */
+	private getAllQuarterPeriods(): QuarterPeriod[] {
+		let currentYear = this.startingYear;
+		let currentQuarter = this.startingQuarter;
+		const periods: QuarterPeriod[] = [];
+
+		while (
+			currentYear < this.currentYear ||
+			(currentYear == this.currentYear &&
+				currentQuarter <= this.currentQuarter)
+		) {
+			periods.push({
+				year: currentYear,
+				quarter: currentQuarter,
+			});
+
+			currentQuarter += 1;
+			if (currentQuarter > 4) {
+				currentYear += 1;
+				currentQuarter = 1;
+			}
+		}
+		return periods;
+	}
+
+	/** Gets the most recent price defined */
+	private getMostRecentPrice(prices: QuarterlyPrices): number | null {
+		const periods = this.getAllQuarterPeriods().reverse();
+		for (const period of periods) {
+			const price = prices[this.getPeriodKey(period)];
+			if (price) return price;
+		}
+		return null;
 	}
 }
