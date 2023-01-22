@@ -1,7 +1,6 @@
 import {
 	AllLocationsCurrentAveragePrice,
 	AllLocationsRecord,
-	Location,
 	LocationCurrentAveragePrice,
 	LocationType,
 } from "../lib/RentData/types";
@@ -168,33 +167,47 @@ const LocationsSectionExpansion: React.FC<LocationsSectionExpansionProps> = ({
 				</Typography>
 			</ExpansionPanelSummary>
 			<ExpansionPanelDetails>
-				<div className={classes.locationLinks}>
-					{locations
-						.sort((a, b) =>
-							a.currentPrice < b.currentPrice ? 1 : -1
-						)
-						.map(({ location, currentPrice }, i) => (
-							<Link
-								key={i}
-								href={`/location/${getLocationName(location)}`}
-							>
-								<Chip
-									key={i}
-									label={
-										<>
-											{getLocationName(location)}{" "}
-											{currentPrice && (
-												<> €{currentPrice}</>
-											)}
-										</>
-									}
-									component="a"
-									clickable
-								/>
-							</Link>
-						))}
-				</div>
+				<LocationLinks locations={locations} />
 			</ExpansionPanelDetails>
 		</ExpansionPanel>
+	);
+};
+
+/** Shows all locations in a section, with their price in deceasing order */
+const LocationLinks: React.FC<
+	Pick<LocationsSectionExpansionProps, "locations">
+> = ({ locations }) => {
+	const classes = useStyles();
+	return (
+		<div className={classes.locationLinks}>
+			{locations
+				// Sort descending by current price
+				.sort((a, b) => (a.currentPrice < b.currentPrice ? 1 : -1))
+				.map(({ location, currentPrice }, i) => (
+					<Link
+						key={i}
+						href={`/location/${getLocationName(location)}`}
+					>
+						<Chip
+							key={i}
+							label={
+								<>
+									{getLocationName(location)}{" "}
+									{currentPrice && (
+										<>
+											€
+											{Math.round(
+												currentPrice
+											).toLocaleString("en-GB")}
+										</>
+									)}
+								</>
+							}
+							component="a"
+							clickable
+						/>
+					</Link>
+				))}
+		</div>
 	);
 };
