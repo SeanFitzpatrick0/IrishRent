@@ -4,9 +4,9 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"dev": "SET NODE_OPTIONS=--openssl-legacy-provider && next dev",
-		"build": "SET NODE_OPTIONS=--openssl-legacy-provider&& next build",
-		"start": "SET NODE_OPTIONS=--openssl-legacy-provider && next start"
+		"dev": "set NODE_OPTIONS=--openssl-legacy-provider && next dev",
+		"build": "set NODE_OPTIONS=--openssl-legacy-provider&& next build",
+		"start": "set NODE_OPTIONS=--openssl-legacy-provider && next start"
 	},
 	"keywords": [],
 	"author": "",
