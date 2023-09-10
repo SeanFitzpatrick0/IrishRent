@@ -42,15 +42,15 @@ export default class RentData {
 	private rentDataFilePath = path.join(
 		process.cwd(),
 		"data",
-		"rent_data_2022-12-29-14-53-19.json"
+		"rent_data_2023-09-10-12-02-00.json"
 	);
 
 	private counties: LocationTypeData;
 	private postcodes: LocationTypeData;
 	private towns: LocationTypeData;
 
-	private currentYear = 2022; // TODO include in data export
-	private currentQuarter = 2; // TODO include in data export
+	private currentYear = 2023; // TODO include in data export
+	private currentQuarter = 1; // TODO include in data export
 	private startingYear = 2007;
 	private startingQuarter = 4;
 
