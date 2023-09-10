@@ -25,7 +25,6 @@ import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
 import { useState } from "react";
 
-// Constants
 const ACCOUNT_ACTIONS_MENU_ID = "users-actions-menu";
 const MOBILE_ACTIONS_MENU_ID = "mobile-actions-menu";
 const SEARCH_BAR_PLACEHOLDER = "Search Location…";
@@ -86,11 +85,11 @@ const useStyles = makeStyles((theme) => ({
 	menuItem: { marginLeft: theme.spacing(2) },
 }));
 
-export default function Header({
-	locations,
-}: {
+export interface HeaderProps {
 	locations: AllLocationsRecord;
-}) {
+}
+
+const Header: React.FC<HeaderProps> = ({ locations }) => {
 	// Styles
 	const classes = useStyles();
 
@@ -120,58 +119,13 @@ export default function Header({
 		<div>
 			<AppBar position="static">
 				<Toolbar>
-					{/* Logo */}
-					<Link href="/">
-						<a>
-							<img
-								className={classes.logo}
-								src="/images/icon/full_logo.svg"
-								alt="Irishrent.ie Logo"
-							/>
-						</a>
-					</Link>
-
-					{/* Search Bar */}
+					<HeaderLogo />
 					<SearchBar locations={locations} />
 
 					{/* Add Space */}
 					<div className={classes.grow} />
 
-					{/* Desktop Links */}
-					<div className={classes.linksDesktop}>
-						<Link href="/location">
-							<Button
-								className={classes.navLink}
-								color="secondary"
-							>
-								Locations
-							</Button>
-						</Link>
-
-						<Link href="/#about">
-							<Button
-								className={classes.navLink}
-								color="secondary"
-							>
-								About
-							</Button>
-						</Link>
-
-						{/*
-							(UNCOMMENT TO ADD USER ACCOUNT ACTIONS)
-							<IconButton
-								edge="end"
-								aria-label="user account actions"
-								aria-haspopup="true"
-								color="inherit"
-								aria-controls={ACCOUNT_ACTIONS_MENU_ID}
-								onClick={handleAccountActionsOpen}
-							>
-								<AccountCircle style={{ fontSize: 30 }} />
-							</IconButton>
-						*/}
-					</div>
-
+					<DesktopInlineLinks />
 					{/* Mobile Links Menu */}
 					<div className={classes.linksMobile}>
 						<IconButton
@@ -230,10 +184,57 @@ export default function Header({
 			/>
 		</div>
 	);
-}
+};
 
-// Render Helpers
-function HeaderMenu({ anchorElement, id, isOpen, handelClose, items }) {
+const HeaderLogo: React.FC = () => {
+	const classes = useStyles();
+	return (
+		<Link href="/">
+			<a>
+				<img
+					className={classes.logo}
+					src="/images/icon/full_logo.svg"
+					alt="Irishrent.ie Logo"
+				/>
+			</a>
+		</Link>
+	);
+};
+
+const DesktopInlineLinks: React.FC = () => {
+	const classes = useStyles();
+	return (
+		<div className={classes.linksDesktop}>
+			<Link href="/location">
+				<Button className={classes.navLink} color="secondary">
+					Locations
+				</Button>
+			</Link>
+
+			<Link href="/#about">
+				<Button className={classes.navLink} color="secondary">
+					About
+				</Button>
+			</Link>
+
+			{/*
+							(UNCOMMENT TO ADD USER ACCOUNT ACTIONS)
+							<IconButton
+								edge="end"
+								aria-label="user account actions"
+								aria-haspopup="true"
+								color="inherit"
+								aria-controls={ACCOUNT_ACTIONS_MENU_ID}
+								onClick={handleAccountActionsOpen}
+							>
+								<AccountCircle style={{ fontSize: 30 }} />
+							</IconButton>
+						*/}
+		</div>
+	);
+};
+
+const HeaderMenu = ({ anchorElement, id, isOpen, handelClose, items }) => {
 	const classes = useStyles();
 
 	return (
@@ -263,7 +264,7 @@ function HeaderMenu({ anchorElement, id, isOpen, handelClose, items }) {
 			))}
 		</Menu>
 	);
-}
+};
 
 function SearchBar({ locations }: { locations: AllLocationsRecord }) {
 	// Styles
@@ -352,3 +353,5 @@ function SearchBar({ locations }: { locations: AllLocationsRecord }) {
 		/>
 	);
 }
+
+export default Header;

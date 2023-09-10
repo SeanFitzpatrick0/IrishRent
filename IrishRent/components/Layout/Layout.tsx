@@ -15,13 +15,12 @@ const useStyles = makeStyles((theme) => ({
 	main: { display: "flex", flexGrow: 1, width: "100%" },
 }));
 
-export default function Layout({
-	locations,
-	children,
-}: {
+export interface LayoutProps {
 	locations: AllLocationsRecord;
-	children: React.ReactNode;
-}) {
+	children: React.ReactChild;
+}
+
+const Layout: React.FC<LayoutProps> = ({ locations, children }) => {
 	// Styles
 	const classes = useStyles();
 
@@ -38,4 +37,6 @@ export default function Layout({
 			<Footer />
 		</div>
 	);
-}
+};
+
+export default Layout;
