@@ -1,28 +1,29 @@
-import React, { useRef, useEffect, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import List from "@material-ui/core/List";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import Typography from "@material-ui/core/Typography";
-import Container from "@material-ui/core/Container";
+import React, { useEffect, useRef, useState } from "react";
+
 import Box from "@material-ui/core/Box";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
+import CloseIcon from "@material-ui/icons/Close";
+import Container from "@material-ui/core/Container";
 import Dialog from "@material-ui/core/Dialog";
-import MuiDialogTitle from "@material-ui/core/DialogTitle";
-import MuiDialogContent from "@material-ui/core/DialogContent";
+import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
+import DirectionsBusIcon from "@material-ui/icons/DirectionsBus";
+import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
 import IconButton from "@material-ui/core/IconButton";
+import InfoIcon from "@material-ui/icons/Info";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import { LocationWikiContent } from "../lib/RentData/types";
+import MuiDialogContent from "@material-ui/core/DialogContent";
+import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import PeopleIcon from "@material-ui/icons/People";
 import TramIcon from "@material-ui/icons/Tram";
-import DirectionsBusIcon from "@material-ui/icons/DirectionsBus";
-import DirectionsBikeIcon from "@material-ui/icons/DirectionsBike";
-import DirectionsWalkIcon from "@material-ui/icons/DirectionsWalk";
-import InfoIcon from "@material-ui/icons/Info";
-import CloseIcon from "@material-ui/icons/Close";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
 
 // TODO Place holder data
 const DEMO_STATS = [
 	{
-		title: null,
 		stats: [
 			{
 				Icon: PeopleIcon,
@@ -58,6 +59,8 @@ const DEMO_STATS = [
 	},
 ];
 
+type LocationDemoStats = typeof DEMO_STATS;
+
 // Styles definition
 const useStyles = makeStyles((theme) => ({
 	sidebar: {
@@ -86,48 +89,20 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function locationDetails({
+const LocationDetailsDesktop: React.FC<LocationDetailsProps> = ({
 	locationName,
-	locationDetails,
-	onLargeScreen,
+	locationDetails: { image, summary },
 	containerHeight,
-}) {
-	return (
-		<>
-			{onLargeScreen ? (
-				<LocationDetailsDesktop
-					locationName={locationName}
-					locationDetails={locationDetails}
-					containerHeight={containerHeight}
-				/>
-			) : (
-				<LocationDetailsMobile
-					locationName={locationName}
-					locationDetails={locationDetails}
-				/>
-			)}
-		</>
-	);
-}
-
-// Render helpers
-function LocationDetailsDesktop({
-	locationName,
-	locationDetails,
-	containerHeight,
-}) {
+}) => {
 	// Styles
 	const classes = useStyles();
 
 	return (
 		<div className={classes.sidebar} style={{ height: containerHeight }}>
 			<Container>
-				<LocationTitle>{locationName}</LocationTitle>
-				<LocationImage
-					locationName={locationName}
-					image={locationDetails.image}
-				/>
-				<LocationSummary locationSummary={locationDetails.summary} />
+				<LocationTitle locationName={locationName} />
+				<LocationImage locationName={locationName} image={image} />
+				<LocationSummary summary={summary} />
 				{/* 
 					UNCOMMENT TO ADD LOCATION STATS
 					<LocationStats locationStats={DEMO_STATS} /> 
@@ -135,20 +110,19 @@ function LocationDetailsDesktop({
 			</Container>
 		</div>
 	);
-}
+};
 
-function LocationDetailsMobile({ locationName, locationDetails }) {
-	// Styles
-	const classes = useStyles();
-
+const LocationDetailsMobile: React.FC<LocationDetailsProps> = ({
+	locationName,
+	locationDetails,
+}) => {
 	// State
 	const [open, setOpen] = React.useState(false);
 	const toggleOpen = () => setOpen((currentState) => !currentState);
 
 	return (
 		<Container>
-			<LocationTitle>
-				{locationName}
+			<LocationTitle locationName={locationName}>
 				<IconButton onClick={toggleOpen}>
 					<InfoIcon />
 				</IconButton>
@@ -163,14 +137,22 @@ function LocationDetailsMobile({ locationName, locationDetails }) {
 			/>
 		</Container>
 	);
-}
+};
 
-function LocationDetailsDialog({
+type LocationDetailsDialogProps = Pick<
+	LocationDetailsProps,
+	"locationName" | "locationDetails"
+> & {
+	open: boolean;
+	onClose: () => void;
+};
+
+const LocationDetailsDialog: React.FC<LocationDetailsDialogProps> = ({
 	locationName,
-	locationDetails,
+	locationDetails: { image, summary },
 	open,
 	onClose,
-}) {
+}) => {
 	// Styles
 	const classes = useStyles();
 
@@ -194,11 +176,8 @@ function LocationDetailsDialog({
 			</MuiDialogTitle>
 
 			<MuiDialogContent dividers>
-				<LocationImage
-					locationName={locationName}
-					image={locationDetails.image}
-				/>
-				<LocationSummary locationSummary={locationDetails.summary} />
+				<LocationImage locationName={locationName} image={image} />
+				<LocationSummary summary={summary} />
 
 				{/* UNCOMMENT TO ADD LOCATION STATS
 					<LocationStats locationStats={DEMO_STATS} /> 
@@ -206,9 +185,11 @@ function LocationDetailsDialog({
 			</MuiDialogContent>
 		</Dialog>
 	);
-}
+};
 
-function LocationTitle(props) {
+const LocationTitle: React.FC<Pick<LocationDetailsProps, "locationName">> = ({
+	locationName,
+}) => {
 	const classes = useStyles();
 	return (
 		<Typography
@@ -219,12 +200,18 @@ function LocationTitle(props) {
 			color="textSecondary"
 			gutterBottom
 		>
-			{props.children}
+			{locationName}
 		</Typography>
 	);
-}
+};
 
-function LocationImage({ locationName, image }) {
+type LocationImageProps = Pick<LocationDetailsProps, "locationName"> &
+	Pick<LocationWikiContent, "image">;
+
+const LocationImage: React.FC<LocationImageProps> = ({
+	locationName,
+	image,
+}) => {
 	const classes = useStyles();
 	return (
 		<Box display="flex">
@@ -237,9 +224,11 @@ function LocationImage({ locationName, image }) {
 			</Box>
 		</Box>
 	);
-}
+};
 
-function LocationSummary({ locationSummary }) {
+type LocationSummaryProps = Pick<LocationWikiContent, "summary">;
+
+const LocationSummary: React.FC<LocationSummaryProps> = ({ summary }) => {
 	const classes = useStyles();
 	return (
 		<Typography
@@ -247,12 +236,16 @@ function LocationSummary({ locationSummary }) {
 			variant="body2"
 			className={classes.locationDescription}
 		>
-			{locationSummary}
+			{summary}
 		</Typography>
 	);
+};
+
+interface LocationStatsProps {
+	locationStats: LocationDemoStats;
 }
 
-function LocationStats({ locationStats }) {
+const LocationStats: React.FC<LocationStatsProps> = ({ locationStats }) => {
 	const classes = useStyles();
 
 	return (
@@ -302,4 +295,23 @@ function LocationStats({ locationStats }) {
 			))}
 		</div>
 	);
+};
+
+interface LocationDetailsProps {
+	locationName: string;
+	locationDetails: LocationWikiContent;
+	onLargeScreen: boolean;
+	containerHeight: number;
 }
+
+export const LocationDetails: React.FC<LocationDetailsProps> = (props) => {
+	return (
+		<>
+			{props.onLargeScreen ? (
+				<LocationDetailsDesktop {...props} />
+			) : (
+				<LocationDetailsMobile {...props} />
+			)}
+		</>
+	);
+};

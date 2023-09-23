@@ -4,6 +4,7 @@ import {
 	LocationData,
 	QuarterPeriod,
 } from "../../lib/RentData/types";
+import { DetailsOptions, RentDetails } from "../../components/RentDetails";
 import { GetStaticPaths, GetStaticProps } from "next";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -15,9 +16,8 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 
 import Head from "next/head";
 import Layout from "../../components/Layout/Layout";
-import LocationDetails from "../../components/LocationDetails";
+import { LocationDetails } from "../../components/LocationDetails";
 import RentData from "../../lib/RentData/RentData";
-import RentDetails from "../../components/RentDetails";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 // Styles definition
@@ -60,10 +60,7 @@ interface LocationPageProps {
 	locationData: LocationData;
 	comparisons: LocationComparisons;
 	locations: AllLocationsRecord;
-	detailsOptions: {
-		propertyTypes: string[];
-		bedTypes: string[];
-	};
+	detailsOptions: DetailsOptions;
 	currentPeriod: QuarterPeriod;
 }
 

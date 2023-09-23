@@ -1,24 +1,31 @@
-import React, { useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import MenuItem from "@material-ui/core/MenuItem";
-import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
-import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
-import green from "@material-ui/core/colors/green";
 import {
+	LocationComparisons,
+	LocationData,
+	QuarterPeriod,
+} from "../lib/RentData/types";
+import React, { useState } from "react";
+import {
+	getAveragePrice,
+	getLocationColor,
 	getLocationName,
 	getRentChange,
-	getLocationColor,
-	getAveragePrice,
 } from "../lib/Utils";
+
+import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
+import Container from "@material-ui/core/Container";
+import Divider from "@material-ui/core/Divider";
+import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import Grid from "@material-ui/core/Grid";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import RentData from "../lib/RentData/RentData";
+import Select from "@material-ui/core/Select";
+import Typography from "@material-ui/core/Typography";
+import green from "@material-ui/core/colors/green";
+import { makeStyles } from "@material-ui/core/styles";
 
 // Constants
 const QUARTER_PER_YEAR = 4;
@@ -37,78 +44,35 @@ const useStyles = makeStyles((theme) => ({
 	directionArrow: { verticalAlign: "middle" },
 }));
 
-export default function RentDetails({
-	locationName,
-	locationData,
-	comparisons,
-	currentPeriod,
-	detailsOptions,
-	onLargeScreen,
-	containerHeight,
-}) {
-	// Styles
-	const classes = useStyles();
-
-	// State
-	const [propertyType, setPropertyType] = useState("Any");
-	const [bedsType, setBedsType] = useState("Any");
-	const optionsState = {
-		propertyType: { value: propertyType, setValue: setPropertyType },
-		bedsType: { value: bedsType, setValue: setBedsType },
-	};
-
-	return (
-		<div
-			className={classes.wrapper}
-			style={
-				onLargeScreen
-					? { height: containerHeight, overflowY: "scroll" }
-					: {}
-			}
-		>
-			<Container>
-				<PriceOptions
-					detailsOptions={detailsOptions}
-					optionsState={optionsState}
-				/>
-
-				<AveragePriceBarChart
-					currentPeriod={currentPeriod}
-					locationName={locationName}
-					locationData={locationData}
-					comparisons={comparisons}
-					propertyType={propertyType}
-					bedsType={bedsType}
-				/>
-
-				<PricesOverTimeLineChart
-					currentPeriod={currentPeriod}
-					locationData={locationData}
-					comparisons={comparisons}
-					propertyType={propertyType}
-					bedsType={bedsType}
-					onLargeScreen={onLargeScreen}
-				/>
-			</Container>
-		</div>
-	);
+interface PriceOptionsProps {
+	detailsOptions: DetailsOptions;
+	propertyType: PropertyType;
+	setPropertyType: React.Dispatch<PropertyType>;
+	bedType: BedType;
+	setBedType: React.Dispatch<BedType>;
 }
 
-function PriceOptions({ detailsOptions, optionsState }) {
+const PriceOptions: React.FC<PriceOptionsProps> = ({
+	detailsOptions: { bedTypes, propertyTypes },
+	propertyType,
+	setPropertyType,
+	bedType,
+	setBedType,
+}) => {
 	const selectionsData = [
 		{
 			label: "Property Type",
-			options: detailsOptions.propertyTypes,
+			options: propertyTypes,
 			help: "Filter by property type",
-			value: optionsState.propertyType.value,
-			setValue: optionsState.propertyType.setValue,
+			value: propertyType,
+			setValue: setBedType,
 		},
 		{
 			label: "Beds",
-			options: detailsOptions.bedTypes,
+			options: bedTypes,
 			help: "Filter by bedrooms",
-			value: optionsState.bedsType.value,
-			setValue: optionsState.bedsType.setValue,
+			value: bedType,
+			setValue: setBedType,
 		},
 	];
 
@@ -125,60 +89,65 @@ function PriceOptions({ detailsOptions, optionsState }) {
 			</Typography>
 
 			<Grid container justify="center" spacing={6}>
-				{selectionsData.map((option) => {
-					const idRoot = option.label
-						.replace(/\s+/g, "-")
-						.toLowerCase();
-					const labelId = idRoot + "-select-label";
-					const selectId = idRoot + "-select";
+				{selectionsData.map(
+					({ help, label, options, value, setValue }) => {
+						const idRoot = label.replace(/\s+/g, "-").toLowerCase();
+						const labelId = idRoot + "-select-label";
+						const selectId = idRoot + "-select";
 
-					return (
-						<Grid item key={option.label}>
-							<FormControl>
-								<InputLabel id={labelId}>
-									{option.label}
-								</InputLabel>
+						return (
+							<Grid item key={label}>
+								<FormControl>
+									<InputLabel id={labelId}>
+										{label}
+									</InputLabel>
 
-								<Select
-									labelId={labelId}
-									id={selectId}
-									value={option.value}
-									onChange={(e) =>
-										option.setValue(
-											e.target.value as string
-										)
-									}
-									displayEmpty
-								>
-									{option.options.map((value) => (
-										<MenuItem key={value} value={value}>
-											{value}
-										</MenuItem>
-									))}
-								</Select>
-								<FormHelperText>{option.help}</FormHelperText>
-							</FormControl>
-						</Grid>
-					);
-				})}
+									<Select
+										labelId={labelId}
+										id={selectId}
+										value={value}
+										onChange={(e) =>
+											setValue(e.target.value as BedType)
+										}
+										displayEmpty
+									>
+										{(options as string[]).map((value) => (
+											<MenuItem key={value} value={value}>
+												{value}
+											</MenuItem>
+										))}
+									</Select>
+									<FormHelperText>{help}</FormHelperText>
+								</FormControl>
+							</Grid>
+						);
+					}
+				)}
 			</Grid>
 		</div>
 	);
-}
+};
 
-function AveragePriceBarChart({
-	currentPeriod,
+type AveragePriceBarChartProps = Pick<
+	RentDetailsProps,
+	"currentPeriod" | "locationName" | "locationData" | "comparisons"
+> & {
+	propertyType: PropertyType;
+	bedsType: BedType;
+};
+
+const AveragePriceBarChart: React.FC<AveragePriceBarChartProps> = ({
+	currentPeriod: { year, quarter },
 	locationName,
 	locationData,
 	comparisons,
 	propertyType,
 	bedsType,
-}) {
+}) => {
 	// Styles
 	const classes = useStyles();
 
 	// State
-	const { year, quarter } = currentPeriod;
 	const averagePrice = getAveragePrice(
 		locationData,
 		propertyType,
@@ -248,22 +217,28 @@ function AveragePriceBarChart({
 			<Bar data={data} options={options} />
 		</div>
 	);
-}
+};
 
-function PricesOverTimeLineChart({
-	currentPeriod,
+type PricesOverTimeLineChartProps = Pick<
+	RentDetailsProps,
+	"currentPeriod" | "locationData" | "comparisons" | "onLargeScreen"
+> & {
+	propertyType: PropertyType;
+	bedsType: BedType;
+};
+
+const PricesOverTimeLineChart: React.FC<PricesOverTimeLineChartProps> = ({
+	currentPeriod: { year, quarter },
 	locationData,
 	comparisons,
 	propertyType,
 	bedsType,
 	onLargeScreen,
-}) {
+}) => {
 	// Styles
 	const classes = useStyles();
 
 	// State
-	const { year, quarter } = currentPeriod;
-
 	/* get percentage & absolute increase */
 	const rentChange = getRentChange(
 		locationData.priceData[`${propertyType}_${bedsType}`],
@@ -312,7 +287,7 @@ function PricesOverTimeLineChart({
 		});
 
 		// Sort data by date
-		data.sort((first, second) => first.x - second.x)
+		data.sort((first, second) => first.x - second.x);
 
 		return { label, data, borderColor, backgroundColor, fill: "none" };
 	});
@@ -324,7 +299,6 @@ function PricesOverTimeLineChart({
 	const options = {
 		scales: { xAxes: [{ type: "time", time: { unit: "year" } }] },
 	};
-
 
 	return (
 		<div>
@@ -358,7 +332,81 @@ function PricesOverTimeLineChart({
 				)}
 			</Typography>
 
-			<Line data={data} options={options} />
+			<Line data={{ ...data }} options={options} />
 		</div>
 	);
+};
+
+export type BedType = (typeof RentData.BED_TYPES)[number] | "Any";
+export type PropertyType = (typeof RentData.PROPERTY_TYPES)[number] | "Any";
+
+export interface DetailsOptions {
+	propertyTypes: PropertyType[];
+	bedTypes: BedType[];
 }
+
+export interface RentDetailsProps {
+	locationName: string;
+	locationData: LocationData;
+	comparisons: LocationComparisons;
+	currentPeriod: QuarterPeriod;
+	detailsOptions: DetailsOptions;
+	onLargeScreen: boolean;
+	containerHeight: number;
+}
+
+export const RentDetails: React.FC<RentDetailsProps> = ({
+	locationName,
+	locationData,
+	comparisons,
+	currentPeriod,
+	detailsOptions,
+	onLargeScreen,
+	containerHeight,
+}) => {
+	// Styles
+	const classes = useStyles();
+
+	// State
+	const [propertyType, setPropertyType] = useState<PropertyType>("Any");
+	const [bedsType, setBedsType] = useState<BedType>("Any");
+
+	return (
+		<div
+			className={classes.wrapper}
+			style={
+				onLargeScreen
+					? { height: containerHeight, overflowY: "scroll" }
+					: {}
+			}
+		>
+			<Container>
+				<PriceOptions
+					detailsOptions={detailsOptions}
+					bedType={bedsType}
+					setBedType={setBedsType}
+					propertyType={propertyType}
+					setPropertyType={setPropertyType}
+				/>
+
+				<AveragePriceBarChart
+					currentPeriod={currentPeriod}
+					locationName={locationName}
+					locationData={locationData}
+					comparisons={comparisons}
+					propertyType={propertyType}
+					bedsType={bedsType}
+				/>
+
+				<PricesOverTimeLineChart
+					currentPeriod={currentPeriod}
+					locationData={locationData}
+					comparisons={comparisons}
+					propertyType={propertyType}
+					bedsType={bedsType}
+					onLargeScreen={onLargeScreen}
+				/>
+			</Container>
+		</div>
+	);
+};
