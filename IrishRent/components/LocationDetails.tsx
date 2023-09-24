@@ -100,7 +100,7 @@ const LocationDetailsDesktop: React.FC<LocationDetailsProps> = ({
 	return (
 		<div className={classes.sidebar} style={{ height: containerHeight }}>
 			<Container>
-				<LocationTitle locationName={locationName} />
+				<LocationTitle>{locationName}</LocationTitle>
 				<LocationImage locationName={locationName} image={image} />
 				<LocationSummary summary={summary} />
 				{/* 
@@ -117,12 +117,13 @@ const LocationDetailsMobile: React.FC<LocationDetailsProps> = ({
 	locationDetails,
 }) => {
 	// State
-	const [open, setOpen] = React.useState(false);
-	const toggleOpen = () => setOpen((currentState) => !currentState);
+	const [isOpen, setIsOpen] = React.useState(false);
+	const toggleOpen = () => setIsOpen((currentState) => !currentState);
 
 	return (
 		<Container>
-			<LocationTitle locationName={locationName}>
+			<LocationTitle>
+				{locationName}
 				<IconButton onClick={toggleOpen}>
 					<InfoIcon />
 				</IconButton>
@@ -132,7 +133,7 @@ const LocationDetailsMobile: React.FC<LocationDetailsProps> = ({
 			<LocationDetailsDialog
 				locationName={locationName}
 				locationDetails={locationDetails}
-				open={open}
+				open={isOpen}
 				onClose={toggleOpen}
 			/>
 		</Container>
@@ -187,8 +188,8 @@ const LocationDetailsDialog: React.FC<LocationDetailsDialogProps> = ({
 	);
 };
 
-const LocationTitle: React.FC<Pick<LocationDetailsProps, "locationName">> = ({
-	locationName,
+const LocationTitle: React.FC<{ children: React.ReactNode }> = ({
+	children,
 }) => {
 	const classes = useStyles();
 	return (
@@ -200,7 +201,7 @@ const LocationTitle: React.FC<Pick<LocationDetailsProps, "locationName">> = ({
 			color="textSecondary"
 			gutterBottom
 		>
-			{locationName}
+			{children}
 		</Typography>
 	);
 };
