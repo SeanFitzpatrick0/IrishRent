@@ -65,7 +65,7 @@ const PriceOptions: React.FC<PriceOptionsProps> = ({
 			options: propertyTypes,
 			help: "Filter by property type",
 			value: propertyType,
-			setValue: setBedType,
+			setValue: setPropertyType,
 		},
 		{
 			label: "Beds",
@@ -169,7 +169,7 @@ const AveragePriceBarChart: React.FC<AveragePriceBarChartProps> = ({
 
 		// Get price data points
 		const data = [
-			location.priceData[`${propertyType}_${bedsType}`].prices[
+			location.priceData[`${propertyType}_${bedsType}`]?.prices[
 				`${year}Q${quarter}`
 			],
 		];
@@ -274,7 +274,7 @@ const PricesOverTimeLineChart: React.FC<PricesOverTimeLineChartProps> = ({
 
 		const data = [];
 		Object.entries(
-			location.priceData[`${propertyType}_${bedsType}`].prices
+			location.priceData[`${propertyType}_${bedsType}`]?.prices || {}
 		).forEach(([k, v], i) => {
 			// Convert Year, Quarter to date
 			let [year, quarter] = k.toString().split("Q");

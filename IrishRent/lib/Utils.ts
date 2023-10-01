@@ -92,10 +92,10 @@ export function getRentChange(
 			`The old time must be before the new time. (old time = ${oldYear}Q${oldQuarter}, new time = ${newYear}Q${newQuarter})`
 		);
 
-	const oldValue = locationPrices.prices[`${oldYear}Q${oldQuarter}`];
-	const newValue = locationPrices.prices[`${newYear}Q${newQuarter}`];
+	const oldValue = locationPrices?.prices[`${oldYear}Q${oldQuarter}`];
+	const newValue = locationPrices?.prices[`${newYear}Q${newQuarter}`];
 
-	if (oldValue !== null && newValue !== null) {
+	if (oldValue && newValue) {
 		const absoluteDifference = newValue - oldValue;
 		const percentageDifference = (absoluteDifference / oldValue) * 100;
 
@@ -133,7 +133,7 @@ export function getAveragePrice(
 	// TODO make types a enum
 	// TODO check valid year and q
 
-	return locationData.priceData[`${propertyType}_${bedsType}`].prices[
+	return locationData.priceData[`${propertyType}_${bedsType}`]?.prices[
 		`${year}Q${quarter}`
 	];
 }
