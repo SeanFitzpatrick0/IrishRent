@@ -107,7 +107,7 @@ const PriceOptions: React.FC<PriceOptionsProps> = ({
 										id={selectId}
 										value={value}
 										onChange={(e) =>
-											setValue(e.target.value as BedType)
+											setValue(e.target.value as any)
 										}
 										displayEmpty
 									>
