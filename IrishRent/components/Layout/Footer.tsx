@@ -1,26 +1,27 @@
-import { useState, useEffect } from "react";
-import { makeStyles, fade } from "@material-ui/core/styles";
-import green from "@material-ui/core/colors/green";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import Link from "@material-ui/core/Link";
-import Container from "@material-ui/core/Container";
-import Box from "@material-ui/core/Box";
-import TextField from "@material-ui/core/TextField";
-import IconButton from "@material-ui/core/IconButton";
-import PublishIcon from "@material-ui/icons/Publish";
-import DoneIcon from "@material-ui/icons/Done";
 import {
-	EmailShareButton,
 	EmailIcon,
-	WhatsappShareButton,
-	WhatsappIcon,
-	TwitterShareButton,
-	TwitterIcon,
-	FacebookShareButton,
+	EmailShareButton,
 	FacebookIcon,
+	FacebookShareButton,
+	TwitterIcon,
+	TwitterShareButton,
+	WhatsappIcon,
+	WhatsappShareButton,
 } from "react-share";
+import React, { useState } from "react";
+import { fade, makeStyles } from "@material-ui/core/styles";
+
+import Box from "@material-ui/core/Box";
+import Container from "@material-ui/core/Container";
+import DoneIcon from "@material-ui/icons/Done";
+import Grid from "@material-ui/core/Grid";
+import IconButton from "@material-ui/core/IconButton";
+import Link from "@material-ui/core/Link";
+import PublishIcon from "@material-ui/icons/Publish";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 import { chunkArray } from "../../lib/Utils";
+import green from "@material-ui/core/colors/green";
 
 const useStyles = makeStyles((theme) => ({
 	"@global": {
@@ -62,138 +63,26 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function Footer() {
-	const aboutContent = {
-		title: "About",
-		items: [
-			{ params: { label: "Home", link: "/" }, Render: FooterLink },
-			{ params: { label: "About", link: "/#About" }, Render: FooterLink },
-		],
-	};
-	const popularLocations = {
-		title: "Popular Locations",
-		items: [
-			{
-				params: { label: "Dublin", link: "/location/Dublin" },
-				Render: FooterLink,
-			},
-			{
-				params: { label: "Cork", link: "/location/Cork" },
-				Render: FooterLink,
-			},
-			{
-				params: { label: "Galway", link: "/location/Galway" },
-				Render: FooterLink,
-			},
-			{
-				params: { label: "Kildare", link: "/location/Kildare" },
-				Render: FooterLink,
-			},
-			{
-				params: { label: "Drogheda", link: "/location/Drogheda" },
-				Render: FooterLink,
-			},
-			{
-				params: { label: "Swords", link: "/location/Swords" },
-				Render: FooterLink,
-			},
-			{
-				params: { label: "Bray", link: "/location/Bray" },
-				Render: FooterLink,
-			},
-			{
-				params: { label: "Navan", link: "/location/Navan" },
-				Render: FooterLink,
-			},
-		],
-	};
-	const finalColumn = {
-		title: "Share",
-		items: [
-			{ params: {}, Render: ShareIcons },
-			{ params: {}, Render: FeedbackInput },
-		],
-	};
-
-	const classes = useStyles();
-	return (
-		<footer className={classes.footer}>
-			<Container maxWidth="lg" className={classes.footerContainer}>
-				<Grid container spacing={4} justify="space-evenly">
-					<FooterColumn content={aboutContent} numbSubColumns={1} />
-					<FooterColumn
-						content={popularLocations}
-						numbSubColumns={2}
-					/>
-					<FooterColumn content={finalColumn} numbSubColumns={1} />
-				</Grid>
-				<Box mt={5}>
-					<Copyright />
-				</Box>
-			</Container>
-		</footer>
-	);
+interface FooterColumnContent<T> {
+	title: string;
+	items: { params: T; Render: React.FC<T> }[];
 }
 
-function Copyright() {
-	const classes = useStyles();
-	return (
-		<Typography
-			className={classes.footerItem}
-			variant="body2"
-			align="center"
-		>
-			{"Copyright © "}
-			<Link color="inherit" href="/">
-				Irishrent.ie
-			</Link>{" "}
-			{new Date().getFullYear()}
-			{"."}
-		</Typography>
-	);
+interface FooterLinkProps {
+	label: string;
+	link: string;
 }
 
-function FooterColumn({ content, numbSubColumns }) {
-	const classes = useStyles();
-	const subColumns = chunkArray(content.items, numbSubColumns);
-
-	return (
-		<Grid item xs={6} sm={3} key={content.title}>
-			{/* Column Title */}
-			<Typography
-				variant="h6"
-				gutterBottom
-				className={classes.footerTitle}
-			>
-				{content.title}
-			</Typography>
-
-			{/* Column List(s) */}
-			<div className={classes.subColumn}>
-				{subColumns.map((column, i) => (
-					<ul key={`${content.title}_${i}`}>
-						{column.map(({ params, Render }, j) => (
-							<li key={`${content.title}_${i}_${j}`}>
-								<Render {...params} />
-							</li>
-						))}
-					</ul>
-				))}
-			</div>
-		</Grid>
-	);
-}
-
-function FooterLink({ label, link }) {
+const FooterLink: React.FC<FooterLinkProps> = ({ label, link }) => {
 	const classes = useStyles();
 	return (
 		<Link href={link} variant="subtitle1" className={classes.footerItem}>
 			{label}
 		</Link>
 	);
-}
+};
 
-function ShareIcons() {
+const ShareIcons: React.FC = () => {
 	const shareUrl = "http://irishrent.ie";
 	const shareSubject = "View Rent Prices in Ireland at Irishrent.ie";
 	const shareMessage =
@@ -237,9 +126,9 @@ function ShareIcons() {
 			</FacebookShareButton>
 		</>
 	);
-}
+};
 
-function FeedbackInput() {
+const FeedbackInput: React.FC = () => {
 	// Styles
 	const classes = useStyles();
 
@@ -317,4 +206,127 @@ function FeedbackInput() {
 			/>
 		</form>
 	);
+};
+
+const ABOUT_CONTENT: FooterColumnContent<FooterLinkProps> = {
+	title: "About",
+	items: [
+		{ params: { label: "Home", link: "/" }, Render: FooterLink },
+		{ params: { label: "About", link: "/#About" }, Render: FooterLink },
+		{
+			params: { label: "Locations", link: "/location" },
+			Render: FooterLink,
+		},
+	],
+};
+
+const POPULAR_LOCATIONS = [
+	"Dublin",
+	"Cork",
+	"Galway",
+	"Kildare",
+	"Drogheda",
+	"Swords",
+	"Bray",
+	"Navan",
+];
+
+const POPULAR_LOCATIONS_CONTENT: FooterColumnContent<FooterLinkProps> = {
+	title: "Popular Locations",
+	items: POPULAR_LOCATIONS.map((locationId) => ({
+		params: {
+			label: locationId,
+			link: `/location/${locationId}`,
+		},
+		Render: FooterLink,
+	})),
+};
+
+const FINAL_COLUMN_CONTENT: FooterColumnContent<{}> = {
+	title: "Share",
+	items: [
+		{ params: {}, Render: ShareIcons },
+		{ params: {}, Render: FeedbackInput },
+	],
+};
+
+export const Footer: React.FC = () => {
+	const classes = useStyles();
+	return (
+		<footer className={classes.footer}>
+			<Container maxWidth="lg" className={classes.footerContainer}>
+				<Grid container spacing={4} justify="space-evenly">
+					<FooterColumn content={ABOUT_CONTENT} numbSubColumns={1} />
+					<FooterColumn
+						content={POPULAR_LOCATIONS_CONTENT}
+						numbSubColumns={2}
+					/>
+					<FooterColumn
+						content={FINAL_COLUMN_CONTENT}
+						numbSubColumns={1}
+					/>
+				</Grid>
+				<Box mt={5}>
+					<Copyright />
+				</Box>
+			</Container>
+		</footer>
+	);
+};
+
+const Copyright: React.FC = () => {
+	const classes = useStyles();
+	return (
+		<Typography
+			className={classes.footerItem}
+			variant="body2"
+			align="center"
+		>
+			{"Copyright © "}
+			<Link color="inherit" href="/">
+				Irishrent.ie
+			</Link>{" "}
+			{new Date().getFullYear()}
+			{"."}
+		</Typography>
+	);
+};
+
+interface FooterColumnProps<T> {
+	content: FooterColumnContent<T>;
+	numbSubColumns: number;
 }
+
+const FooterColumn: React.FC<FooterColumnProps<any>> = ({
+	content: { title, items },
+	numbSubColumns,
+}) => {
+	const classes = useStyles();
+	const subColumns = chunkArray(items, numbSubColumns);
+
+	return (
+		<Grid item xs={6} sm={3} key={title}>
+			{/* Column Title */}
+			<Typography
+				variant="h6"
+				gutterBottom
+				className={classes.footerTitle}
+			>
+				{title}
+			</Typography>
+
+			{/* Column List(s) */}
+			<div className={classes.subColumn}>
+				{subColumns.map((column, i) => (
+					<ul key={`${title}_${i}`}>
+						{column.map(({ params, Render }, j) => (
+							<li key={`${title}_${i}_${j}`}>
+								<Render {...params} />
+							</li>
+						))}
+					</ul>
+				))}
+			</div>
+		</Grid>
+	);
+};

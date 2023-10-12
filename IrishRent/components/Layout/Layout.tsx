@@ -1,7 +1,7 @@
 import { initGA, logPageView } from "../../lib/Analytics";
 
 import { AllLocationsRecord } from "../../lib/RentData/types";
-import Footer from "./Footer";
+import { Footer } from "./Footer";
 import Header from "./Header";
 import { makeStyles } from "@material-ui/core/styles";
 import { useEffect } from "react";
