@@ -1,5 +1,6 @@
 import { Bar, Line } from "react-chartjs-2";
 import {
+	Location,
 	LocationComparisons,
 	LocationData,
 	QuarterPeriod,
@@ -14,12 +15,14 @@ import {
 
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
+import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import Divider from "@material-ui/core/Divider";
 import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import Grid from "@material-ui/core/Grid";
 import InputLabel from "@material-ui/core/InputLabel";
+import Link from "next/link";
 import MenuItem from "@material-ui/core/MenuItem";
 import RentData from "../lib/RentData/RentData";
 import Select from "@material-ui/core/Select";
@@ -337,6 +340,55 @@ const PricesOverTimeLineChart: React.FC<PricesOverTimeLineChartProps> = ({
 	);
 };
 
+type LocationPageDeepLinksProps = { locationDetails: Location } & Pick<
+	RentDetailsProps,
+	"locationName"
+>;
+
+interface LocationsPageDeepLinkContent {
+	deepLinkId: string;
+	label: string;
+}
+
+/** Links to view full list of location type items on the locations page */
+const LocationPageDeepLinks: React.FC<LocationPageDeepLinksProps> = ({
+	locationName,
+	locationDetails: { county, postcode },
+}) => {
+	const isCounty = locationName === county;
+	const isInDublin = county === "Dublin";
+	const isDublinPostCode = locationName === postcode;
+
+	const linksContent: LocationsPageDeepLinkContent[] = [
+		{
+			deepLinkId: "AllCounties",
+			label: "All Counties",
+		},
+		(isInDublin || isDublinPostCode) && {
+			deepLinkId: "AllPostcodes",
+			label: "Dublin Postcodes",
+		},
+		{
+			deepLinkId: county,
+			label: `Towns in ${county}`,
+		},
+	].filter(Boolean);
+
+	return (
+		<Grid container spacing={5} justifyContent="center">
+			{linksContent.map(({ deepLinkId, label }) => (
+				<Grid item>
+					<Link href={`/location#${deepLinkId}`}>
+						<Button variant="outlined" color="primary">
+							<a>{label}</a>
+						</Button>
+					</Link>
+				</Grid>
+			))}
+		</Grid>
+	);
+};
+
 export type BedType = (typeof RentData.BED_TYPES)[number] | "Any";
 export type PropertyType = (typeof RentData.PROPERTY_TYPES)[number] | "Any";
 
@@ -387,6 +439,11 @@ export const RentDetails: React.FC<RentDetailsProps> = ({
 					setBedType={setBedsType}
 					propertyType={propertyType}
 					setPropertyType={setPropertyType}
+				/>
+
+				<LocationPageDeepLinks
+					locationName={locationName}
+					locationDetails={locationData.location}
 				/>
 
 				<AveragePriceBarChart

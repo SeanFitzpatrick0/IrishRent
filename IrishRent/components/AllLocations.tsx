@@ -47,8 +47,8 @@ export interface AllLocationsProps {
 }
 
 type ExpandersState = {
-	allCounties: boolean;
-	allPostCodes: boolean;
+	AllCounties: boolean;
+	AllPostcodes: boolean;
 	[countyName: string]: boolean;
 };
 
@@ -89,8 +89,8 @@ function initializeExpandersState(
 	initialValue: boolean
 ): ExpandersState {
 	return {
-		allCounties: false,
-		allPostCodes: false,
+		AllCounties: false,
+		AllPostcodes: false,
 		...Object.fromEntries(
 			currentPrices[LocationType.COUNTY].map(({ location }) => [
 				location.county,
@@ -118,7 +118,7 @@ export const AllLocations: React.FC<AllLocationsProps> = ({
 
 	// Set initial expander open based on search fragment
 	useEffect(() => {
-		const locationFragment = asPath.split("#")[1];
+		let locationFragment = asPath.split("#")[1];
 		expanderDispatch({
 			type: "OPEN_BY_ID",
 			payload: {
@@ -133,21 +133,21 @@ export const AllLocations: React.FC<AllLocationsProps> = ({
 			<div className={classes.panels}>
 				<AllCountiesSectionExpansion
 					locations={currentPrices[LocationType.COUNTY]}
-					expanded={expanderState.allCounties}
+					expanded={expanderState.AllCounties}
 					onChange={() =>
 						expanderDispatch({
 							type: "TOGGLE_BY_ID",
-							payload: { id: "allCounties" },
+							payload: { id: "AllCounties" },
 						})
 					}
 				/>
 				<AllPostCodesSectionExpansion
 					locations={currentPrices[LocationType.POST_CODE]}
-					expanded={expanderState.allPostCodes}
+					expanded={expanderState.AllPostcodes}
 					onChange={() =>
 						expanderDispatch({
 							type: "TOGGLE_BY_ID",
-							payload: { id: "allPostCodes" },
+							payload: { id: "AllPostcodes" },
 						})
 					}
 				/>
@@ -216,7 +216,7 @@ const AllPostCodesSectionExpansion: React.FC<
 		subtitle="view all Dublin post codes"
 		locations={locations}
 		emphasize
-		panelId="AllPostCodes"
+		panelId="AllPostcodes"
 		expanded={expanded}
 		onChange={onChange}
 	/>

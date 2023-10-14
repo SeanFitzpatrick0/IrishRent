@@ -255,7 +255,7 @@ export const Footer: React.FC = () => {
 	return (
 		<footer className={classes.footer}>
 			<Container maxWidth="lg" className={classes.footerContainer}>
-				<Grid container spacing={4} justify="space-evenly">
+				<Grid container spacing={4} justifyContent="space-evenly">
 					<FooterColumn content={ABOUT_CONTENT} numbSubColumns={1} />
 					<FooterColumn
 						content={POPULAR_LOCATIONS_CONTENT}
