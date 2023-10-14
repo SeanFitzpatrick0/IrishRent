@@ -1,21 +1,24 @@
 import {
 	AllLocationsCurrentAveragePrice,
-	AllLocationsRecord,
 	LocationCurrentAveragePrice,
 	LocationType,
 } from "../lib/RentData/types";
+import ExpansionPanel, {
+	ExpansionPanelProps,
+} from "@material-ui/core/ExpansionPanel";
+import { Reducer, useEffect, useReducer } from "react";
 
 import Chip from "@material-ui/core/Chip";
 import Container from "@material-ui/core/Container";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import Link from "next/link";
 import Typography from "@material-ui/core/Typography";
-import _ from "lodash";
 import { getLocationName } from "../lib/Utils";
+import { groupBy } from "lodash";
 import { makeStyles } from "@material-ui/core/styles";
+import { useRouter } from "next/router";
 
 // Style Definitions
 const useStyles = makeStyles((theme) => ({
@@ -40,19 +43,89 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export interface AllLocationsProps {
-	locations: AllLocationsRecord;
 	currentPrices: AllLocationsCurrentAveragePrice;
 }
 
+type ExpandersState = {
+	allCounties: boolean;
+	allPostCodes: boolean;
+	[countyName: string]: boolean;
+};
+
+type ExpandersStateActions =
+	| { type: "EXPAND_ALL" }
+	| { type: "COLLAPSE_ALL" }
+	| {
+			type: "TOGGLE_BY_ID" | "OPEN_BY_ID";
+			payload: { id: keyof ExpandersState };
+	  };
+
+const expandersStateReducer: Reducer<ExpandersState, ExpandersStateActions> = (
+	state,
+	action
+) => {
+	const newState = { ...state };
+	let id;
+	switch (action.type) {
+		case "EXPAND_ALL":
+			Object.keys(newState).forEach((key) => (newState[key] = true));
+			return newState;
+		case "COLLAPSE_ALL":
+			Object.keys(newState).forEach((key) => (newState[key] = false));
+			return newState;
+		case "TOGGLE_BY_ID":
+			id = action.payload.id;
+			newState[id] = !newState[id];
+			return newState;
+		case "OPEN_BY_ID":
+			id = action.payload.id;
+			newState[id] = true;
+			return newState;
+	}
+};
+
+function initializeExpandersState(
+	currentPrices: AllLocationsCurrentAveragePrice,
+	initialValue: boolean
+): ExpandersState {
+	return {
+		allCounties: false,
+		allPostCodes: false,
+		...Object.fromEntries(
+			currentPrices[LocationType.COUNTY].map(({ location }) => [
+				location.county,
+				initialValue,
+			])
+		),
+	};
+}
+
 export const AllLocations: React.FC<AllLocationsProps> = ({
-	locations,
 	currentPrices,
 }) => {
+	const { asPath } = useRouter();
 	const classes = useStyles();
-	const groupedTownsInCounties = _.groupBy(
+	const groupedTownsInCounties = groupBy(
 		currentPrices[LocationType.TOWN],
 		(town) => town.location.county
 	);
+
+	// State to determine which expander is open
+	const [expanderState, expanderDispatch] = useReducer(
+		expandersStateReducer,
+		initializeExpandersState(currentPrices, false)
+	);
+
+	// Set initial expander open based on search fragment
+	useEffect(() => {
+		const locationFragment = asPath.split("#")[1];
+		expanderDispatch({
+			type: "OPEN_BY_ID",
+			payload: {
+				id: locationFragment,
+			},
+		});
+	}, [asPath]);
 
 	return (
 		<Container maxWidth="md" className={classes.wrapper}>
@@ -60,9 +133,23 @@ export const AllLocations: React.FC<AllLocationsProps> = ({
 			<div className={classes.panels}>
 				<AllCountiesSectionExpansion
 					locations={currentPrices[LocationType.COUNTY]}
+					expanded={expanderState.allCounties}
+					onChange={() =>
+						expanderDispatch({
+							type: "TOGGLE_BY_ID",
+							payload: { id: "allCounties" },
+						})
+					}
 				/>
 				<AllPostCodesSectionExpansion
 					locations={currentPrices[LocationType.POST_CODE]}
+					expanded={expanderState.allPostCodes}
+					onChange={() =>
+						expanderDispatch({
+							type: "TOGGLE_BY_ID",
+							payload: { id: "allPostCodes" },
+						})
+					}
 				/>
 				{Object.entries(groupedTownsInCounties).map(
 					([county, towns]: [
@@ -73,6 +160,13 @@ export const AllLocations: React.FC<AllLocationsProps> = ({
 							title={county}
 							subtitle={`view all towns in ${county}`}
 							locations={towns}
+							expanded={expanderState[county]}
+							onChange={() =>
+								expanderDispatch({
+									type: "TOGGLE_BY_ID",
+									payload: { id: county },
+								})
+							}
 						/>
 					)
 				)}
@@ -101,48 +195,57 @@ const AllLocationsTitle: React.FC = () => (
 );
 
 const AllCountiesSectionExpansion: React.FC<
-	Pick<LocationsSectionExpansionProps, "locations">
-> = ({ locations }) => (
+	Pick<LocationsSectionExpansionProps, "locations" | "expanded" | "onChange">
+> = ({ locations, expanded, onChange }) => (
 	<LocationsSectionExpansion
 		title="Counties"
 		subtitle="view all counties"
 		locations={locations}
 		emphasize
 		panelId="AllCounties"
+		expanded={expanded}
+		onChange={onChange}
 	/>
 );
 
 const AllPostCodesSectionExpansion: React.FC<
-	Pick<LocationsSectionExpansionProps, "locations">
-> = ({ locations }) => (
+	Pick<LocationsSectionExpansionProps, "locations" | "expanded" | "onChange">
+> = ({ locations, expanded, onChange }) => (
 	<LocationsSectionExpansion
 		title="Post Codes"
 		subtitle="view all Dublin post codes"
 		locations={locations}
 		emphasize
 		panelId="AllPostCodes"
+		expanded={expanded}
+		onChange={onChange}
 	/>
 );
 
 const CountyCodesSectionExpansion: React.FC<
-	Pick<LocationsSectionExpansionProps, "title" | "subtitle" | "locations">
-> = ({ title, subtitle, locations }) => (
+	Pick<
+		LocationsSectionExpansionProps,
+		"title" | "subtitle" | "locations" | "expanded" | "onChange"
+	>
+> = ({ title, subtitle, locations, expanded, onChange }) => (
 	<LocationsSectionExpansion
 		title={title}
 		subtitle={subtitle}
 		locations={locations}
 		panelId={title}
 		emphasize={false}
+		expanded={expanded}
+		onChange={onChange}
 	/>
 );
 
-interface LocationsSectionExpansionProps {
+type LocationsSectionExpansionProps = {
+	panelId: string;
 	title: string;
 	subtitle: string;
 	locations: LocationCurrentAveragePrice[];
 	emphasize: boolean;
-	panelId: string;
-}
+} & Pick<ExpansionPanelProps, "expanded" | "onChange">;
 
 const LocationsSectionExpansion: React.FC<LocationsSectionExpansionProps> = ({
 	title,
@@ -150,10 +253,17 @@ const LocationsSectionExpansion: React.FC<LocationsSectionExpansionProps> = ({
 	locations,
 	emphasize,
 	panelId,
+	expanded,
+	onChange,
 }) => {
 	const classes = useStyles();
 	return (
-		<ExpansionPanel className={emphasize ? classes.emphasizedExpand : ""}>
+		<ExpansionPanel
+			id={panelId}
+			className={emphasize ? classes.emphasizedExpand : ""}
+			expanded={expanded}
+			onChange={onChange}
+		>
 			<ExpansionPanelSummary
 				expandIcon={<ExpandMoreIcon />}
 				aria-controls={`${panelId}-content`}

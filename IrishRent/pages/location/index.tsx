@@ -45,10 +45,7 @@ const AllLocationsPage: React.FC<AllLocationsPageProps> = ({
 		<>
 			<AllLocationsHead />
 			<Layout locations={locations}>
-				<AllLocations
-					locations={locations}
-					currentPrices={currentPrices}
-				/>
+				<AllLocations currentPrices={currentPrices} />
 			</Layout>
 		</>
 	);
