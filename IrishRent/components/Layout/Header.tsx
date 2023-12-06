@@ -266,7 +266,9 @@ const HeaderMenu = ({ anchorElement, id, isOpen, handelClose, items }) => {
 	);
 };
 
-function SearchBar({ locations }: { locations: AllLocationsRecord }) {
+const SearchBar: React.FC<{ locations: AllLocationsRecord }> = ({
+	locations,
+}) => {
 	// Styles
 	const classes = useStyles();
 
@@ -352,6 +354,6 @@ function SearchBar({ locations }: { locations: AllLocationsRecord }) {
 			)}
 		/>
 	);
-}
+};
 
 export default Header;
