@@ -23,6 +23,8 @@ import Typography from "@material-ui/core/Typography";
 import { getLocationName } from "../../lib/Utils";
 import match from "autosuggest-highlight/match";
 import parse from "autosuggest-highlight/parse";
+import { theme } from "../../pages/_app";
+import { useMediaQuery } from "@material-ui/core";
 import { useState } from "react";
 
 const ACCOUNT_ACTIONS_MENU_ID = "users-actions-menu";
@@ -269,6 +271,8 @@ const HeaderMenu = ({ anchorElement, id, isOpen, handelClose, items }) => {
 const SearchBar: React.FC<{ locations: AllLocationsRecord }> = ({
 	locations,
 }) => {
+	const isOnLargeScreen = useMediaQuery(theme.breakpoints.up("sm"));
+
 	// Styles
 	const classes = useStyles();
 
@@ -345,8 +349,8 @@ const SearchBar: React.FC<{ locations: AllLocationsRecord }> = ({
 					ref={params.InputProps.ref}
 					inputProps={params.inputProps}
 					placeholder={SEARCH_BAR_PLACEHOLDER}
-					autoFocus
 					classes={{ root: classes.inputRoot }}
+					autoFocus={isOnLargeScreen}
 				/>
 			)}
 			renderOption={(option: Location, { inputValue }) => (
