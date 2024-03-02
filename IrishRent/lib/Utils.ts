@@ -137,3 +137,18 @@ export function getAveragePrice(
 		`${year}Q${quarter}`
 	];
 }
+
+export function getMostRecentAveragePrice(
+	locationData: LocationData,
+	propertyType: string,
+	bedsType: string
+): number | undefined {
+	const entriesWithPrices = Object.entries(
+		locationData.priceData[`${propertyType}_${bedsType}`]?.prices
+	)
+		.filter(([_period, price]) => Boolean(price))
+		.sort()
+		.reverse();
+
+	return entriesWithPrices[0] ? entriesWithPrices[0][1] : undefined;
+}

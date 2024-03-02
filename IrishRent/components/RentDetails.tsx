@@ -7,9 +7,9 @@ import {
 } from "../lib/RentData/types";
 import React, { useState } from "react";
 import {
-	getAveragePrice,
 	getLocationColor,
 	getLocationName,
+	getMostRecentAveragePrice,
 	getRentChange,
 } from "../lib/Utils";
 
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 		paddingTop: theme.spacing(3),
 		paddingBottom: theme.spacing(7),
 	},
-	chartTile: { fontSize: 25 },
+	chartTile: { fontSize: 25, paddingTop: theme.spacing(3) },
 	chartDescription: { margin: theme.spacing(1) },
 	directionArrow: { verticalAlign: "middle" },
 }));
@@ -140,7 +140,6 @@ type AveragePriceBarChartProps = Pick<
 };
 
 const AveragePriceBarChart: React.FC<AveragePriceBarChartProps> = ({
-	currentPeriod: { year, quarter },
 	locationName,
 	locationData,
 	comparisons,
@@ -151,12 +150,10 @@ const AveragePriceBarChart: React.FC<AveragePriceBarChartProps> = ({
 	const classes = useStyles();
 
 	// State
-	const averagePrice = getAveragePrice(
+	const averagePrice = getMostRecentAveragePrice(
 		locationData,
 		propertyType,
-		bedsType,
-		year,
-		quarter
+		bedsType
 	);
 
 	const locations = [locationData, ...comparisons.neighbors];
@@ -170,11 +167,9 @@ const AveragePriceBarChart: React.FC<AveragePriceBarChartProps> = ({
 			comparisons.parent && getLocationName(comparisons.parent.location)
 		);
 
-		// Get price data points
+		// Get price data point
 		const data = [
-			location.priceData[`${propertyType}_${bedsType}`]?.prices[
-				`${year}Q${quarter}`
-			],
+			getMostRecentAveragePrice(location, propertyType, bedsType),
 		];
 
 		return { label, data, borderColor, backgroundColor, borderWidth: 1 };
@@ -324,14 +319,12 @@ const PricesOverTimeLineChart: React.FC<PricesOverTimeLineChartProps> = ({
 				color="textSecondary"
 				className={classes.chartDescription}
 			>
-				{rentChange ? (
+				{rentChange && (
 					<>
 						{arrowIcon}
 						<b>{rentChange.percentage}</b> |{" "}
 						<b>{rentChange.absolute}</b> since last year
 					</>
-				) : (
-					<>{NO_DATA_LABEL}</>
 				)}
 			</Typography>
 
