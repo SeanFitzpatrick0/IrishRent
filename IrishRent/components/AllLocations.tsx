@@ -13,7 +13,6 @@ import Container from "@material-ui/core/Container";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import Link from "next/link";
 import Typography from "@material-ui/core/Typography";
 import { getLocationName } from "../lib/Utils";
 import { groupBy } from "lodash";
@@ -294,29 +293,25 @@ const LocationLinks: React.FC<
 				// Sort descending by current price
 				.sort((a, b) => (a.currentPrice < b.currentPrice ? 1 : -1))
 				.map(({ location, currentPrice }, i) => (
-					<Link
+					<Chip
 						key={i}
+						label={
+							<>
+								{getLocationName(location)}{" "}
+								{currentPrice && (
+									<>
+										€
+										{Math.round(
+											currentPrice
+										).toLocaleString("en-GB")}
+									</>
+								)}
+							</>
+						}
+						component="a"
 						href={`/location/${getLocationName(location)}`}
-					>
-						<Chip
-							key={i}
-							label={
-								<>
-									{getLocationName(location)}{" "}
-									{currentPrice && (
-										<>
-											€
-											{Math.round(
-												currentPrice
-											).toLocaleString("en-GB")}
-										</>
-									)}
-								</>
-							}
-							component="a"
-							clickable
-						/>
-					</Link>
+						clickable
+					/>
 				))}
 		</div>
 	);
