@@ -225,7 +225,7 @@ const POPULAR_LOCATIONS = [
 	"Cork",
 	"Galway",
 	"Kildare",
-	"Drogheda",
+	"Tallaght",
 	"Swords",
 	"Bray",
 	"Navan",
