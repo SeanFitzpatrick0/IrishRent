@@ -1,14 +1,14 @@
-import Link from "@material-ui/core/Link";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
+import Container from "@material-ui/core/Container";
+import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
+import Link from "@material-ui/core/Link";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
-import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
+import ListItemText from "@material-ui/core/ListItemText";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
 	wrapper: {
@@ -87,13 +87,14 @@ export default function About() {
 						.
 					</Typography>
 
+					<br />
+
 					<Typography component="p" variant="body1">
-						If you have any questions or feedback, please contact us
-						at{" "}
-						<Link href="mailto:contact@Irishrent.ie">
-							contact@Irishrent.ie
-						</Link>{" "}
-						or submit it in the input at the bottom of the page.
+						Learn more about how this site is made by visiting it's{" "}
+						<Link href="https://github.com/SeanFitzpatrick0/IrishRent">
+							GitHub page
+						</Link>
+						.
 					</Typography>
 				</CardContent>
 			</Card>
