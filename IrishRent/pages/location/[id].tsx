@@ -20,6 +20,11 @@ import { LocationDetails } from "../../components/LocationDetails";
 import RentData from "../../lib/RentData/RentData";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
+const titlePriceFormatter = new Intl.NumberFormat("en-EN", {
+	maximumFractionDigits: 0,
+	minimumFractionDigits: 0,
+});
+
 // Styles definition
 const useStyles = makeStyles((_theme) => ({
 	container: { margin: "auto", width: "100%" },
@@ -144,7 +149,9 @@ function getPageTitle(
 	let title = `Rent in ${locationName}`;
 	/* add average price */
 	if (averagePrice)
-		title += ` | Average rent price in ${locationName} is €${averagePrice}`;
+		title += ` | Average rent price in ${locationName} is €${titlePriceFormatter.format(
+			averagePrice
+		)}`;
 	return title;
 }
 
