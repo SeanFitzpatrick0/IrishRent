@@ -10,7 +10,7 @@ from utils import replace_item_in_dict, get_location_name
 
 NAN_REPLACE = "Missing"
 RAW_DATA_PATH = os.path.join(
-    "raw_data", "Quarter_Location_PropertyType_NumbBed(2007Q4-2024Q2)2024_10_05.px"
+    "raw_data", "Quarter_Location_PropertyType_NumbBed(2007Q4-2024Q2)2025_04_18.px"
 )
 WIKI_CONTENT_PATH = os.path.join("clean_data", "wiki_data_2020-07-20-18-46-09.json")
 
@@ -163,7 +163,7 @@ def format_rent_data(df):
             "county": county,
             "postcode": postcode,
             "town": town,
-            "inMultipleCounties": inMultipleCounties,
+            "inMultipleCounties": bool(inMultipleCounties),
         }
 
         # Get the prices at each Q for each combination of bed and propertyType
