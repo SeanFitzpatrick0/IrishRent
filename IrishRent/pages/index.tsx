@@ -65,7 +65,10 @@ const LastUpdateAlert: React.FC<Pick<HomeProps, "currentPeriod">> = ({
 				{year} Q{quarter}
 			</strong>{" "}
 			rent prices. View RTB Rent Index Report{" "}
-			<Link href="https://www.rtb.ie/research/ar">here</Link>.
+			<Link href="https://rtb.ie/data-insights/rtb-research-reports/rtb-esri-rent-index/">
+				here
+			</Link>
+			.
 		</Alert>
 	);
 };

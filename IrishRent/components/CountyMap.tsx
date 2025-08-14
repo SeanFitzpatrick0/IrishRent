@@ -1,7 +1,8 @@
-import { Chart } from "react-google-charts";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
+
+import { Chart } from "react-google-charts";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 // Styles Definition
 const useStyles = makeStyles((theme) => ({
@@ -45,7 +46,10 @@ export default function CountyMap({ countyPrices }) {
 						<CircularProgress size={70} />
 					</div>
 				}
-				data={[["City", "Average rent price (€)"], ...chartData]}
+				data={[
+					["City", onLargeScreen ? "Average rent price €" : "Avg €"],
+					...chartData,
+				]}
 				width="95%"
 				options={{
 					region: "IE",
