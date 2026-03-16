@@ -42,15 +42,15 @@ export default class RentData {
 	private rentDataFilePath = path.join(
 		process.cwd(),
 		"data",
-		"rent_data_2025-08-14-11-10-28.json"
+		"rent_data_2026-03-16-13-18-40.json",
 	);
 
 	private counties: LocationTypeData;
 	private postcodes: LocationTypeData;
 	private towns: LocationTypeData;
 
-	private currentYear = 2024; // TODO include in data export
-	private currentQuarter = 4; // TODO include in data export
+	private currentYear = 2025; // TODO include in data export
+	private currentQuarter = 2; // TODO include in data export
 	private startingYear = 2007;
 	private startingQuarter = 4;
 
@@ -79,18 +79,18 @@ export default class RentData {
 	/** Get all location details without prices */
 	public getAllLocationDetails(): AllLocationsRecord {
 		let counties: Location[] = Object.values(this.counties).map(
-			(county) => county.location
+			(county) => county.location,
 		);
 		let postcodes: Location[] = Object.values(this.postcodes).map(
-			(postcode) => postcode.location
+			(postcode) => postcode.location,
 		);
 		let towns: Location[] = Object.values(this.towns).map(
-			(town) => town.location
+			(town) => town.location,
 		);
 
 		/* Sort postcodes by number */
 		postcodes.sort((a, b) =>
-			a.postcode.localeCompare(b.postcode, undefined, { numeric: true })
+			a.postcode.localeCompare(b.postcode, undefined, { numeric: true }),
 		);
 
 		return { counties, postcodes, towns };
@@ -100,26 +100,26 @@ export default class RentData {
 	public getAllLocationsWithCurrentAveragePrice(): AllLocationsCurrentAveragePrice {
 		return {
 			[LocationType.COUNTY]: this.getLocationTypesCurrentAveragePriceData(
-				this.counties
+				this.counties,
 			),
 			[LocationType.POST_CODE]:
 				this.getLocationTypesCurrentAveragePriceData(this.postcodes),
 			[LocationType.TOWN]: this.getLocationTypesCurrentAveragePriceData(
-				this.towns
+				this.towns,
 			),
 		};
 	}
 
 	private getLocationTypesCurrentAveragePriceData(
-		locationTypeData: LocationTypeData
+		locationTypeData: LocationTypeData,
 	): LocationCurrentAveragePrice[] {
 		return Object.values(locationTypeData).map(
 			({ location, priceData }) => ({
 				location,
 				currentPrice: this.getMostRecentPrice(
-					priceData["Any_Any"].prices
+					priceData["Any_Any"].prices,
 				),
-			})
+			}),
 		);
 	}
 
@@ -128,7 +128,7 @@ export default class RentData {
 		for (let [countyName, county] of Object.entries(this.counties)) {
 			let countyPrices = {};
 			for (let [recordType, priceRecord] of Object.entries(
-				county.priceData
+				county.priceData,
 			)) {
 				countyPrices[recordType] = {
 					propertyType: priceRecord.propertyType,
@@ -164,14 +164,14 @@ export default class RentData {
 		else if (this.towns[locationName]) return this.towns[locationName];
 		else
 			throw new Error(
-				`ERROR: No location with name ${locationName} found.`
+				`ERROR: No location with name ${locationName} found.`,
 			);
 	}
 
 	// TODO make variables for number of comparisons
 	// TODO fix bug if there isnt enough comparisons in a county (e.g. county in carlow)
 	public getComparisonLocations(
-		referenceLocation: Location
+		referenceLocation: Location,
 	): LocationComparisons {
 		if (
 			referenceLocation.locationType === LocationType.TOWN ||
@@ -181,12 +181,12 @@ export default class RentData {
 			let similarLocations = Object.values(
 				referenceLocation.locationType === LocationType.TOWN
 					? this.towns
-					: this.postcodes
+					: this.postcodes,
 			).filter(
 				(location) =>
 					location.location.county === referenceLocation.county &&
 					getLocationName(location.location) !==
-						getLocationName(referenceLocation)
+						getLocationName(referenceLocation),
 			);
 			let numNeighbors =
 				similarLocations.length >= NUMB_COMPARISONS - 1
@@ -198,7 +198,7 @@ export default class RentData {
 			let similarLocations = Object.values(this.counties).filter(
 				(location) =>
 					getLocationName(location.location) !==
-					getLocationName(referenceLocation)
+					getLocationName(referenceLocation),
 			);
 
 			let numNeighbors =
