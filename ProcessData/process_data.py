@@ -10,7 +10,7 @@ from utils import replace_item_in_dict, get_location_name
 
 NAN_REPLACE = "Missing"
 RAW_DATA_PATH = os.path.join(
-    "raw_data", "Quarter_Location_PropertyType_NumbBed(2007Q4-2025Q2)2026_03_16.px"
+    "raw_data", "Quarter_Location_PropertyType_NumbBed(2007Q4-2025Q3)2026_04_27.px"
 )
 WIKI_CONTENT_PATH = os.path.join("clean_data", "wiki_data_2020-07-20-18-46-09.json")
 
